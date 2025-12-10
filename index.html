@@ -456,11 +456,11 @@
                 </tr>
             </thead>
             <tbody id="tableBody">
-            </tbody>
+                </tbody>
         </table>
-
+        
         <button class="share-btn" id="shareResultBtn" onclick="shareResults()">
-            Поделиться результатами (Telegram/WhatsApp)
+            Поделиться
         </button>
 
 
@@ -473,7 +473,7 @@
                 </div>
             </div>
         </div>
-    </div>
+        </div>
 
     <script>
         // --- ГЛОБАЛЬНАЯ ПЕРЕМЕННАЯ ДЛЯ ХРАНЕНИЯ РЕЗУЛЬТАТОВ ---
@@ -507,7 +507,7 @@
         // --- ВСПОМОГАТЕЛЬНАЯ ФУНКЦИЯ ФОРМАТИРОВАНИЯ ---
         function formatNumberForDisplay(num, decimalPlaces = 1) {
             if (isNaN(num) || !isFinite(num)) return '—';
-
+            
             const fixedString = num.toFixed(decimalPlaces);
             // Возвращаем число, а не строку, чтобы избежать лишних нулей (.0)
             return decimalPlaces === 0 ? parseInt(fixedString) : parseFloat(fixedString);
@@ -547,10 +547,10 @@
             // Сброс предыдущих результатов
             latestResults = null;
             document.getElementById('shareResultBtn').style.display = 'none';
-
+            
             // 1. Получаем значения из полей ввода и сбрасываем предыдущие ошибки
             const inputs = ['distanceToEdge', 'distanceToRupture', 'masterCore', 'targetOuter', 'densityCorrection'];
-            inputs.forEach(id => toggleErrorClass(id, true));
+            inputs.forEach(id => toggleErrorClass(id, true)); 
 
             const distanceToEdge = parseFloat(document.getElementById('distanceToEdge').value);
             const distanceToRupture = parseFloat(document.getElementById('distanceToRupture').value);
@@ -595,7 +595,7 @@
             }
 
             // 3. Расчеты геометрии
-
+            
             // Внешний диаметр маточного рулона (до порыва), на основе distanceToEdge
             const D_master_initial = d_master + (2 * distanceToEdge);
 
@@ -643,7 +643,7 @@
 
             // Общая рабочая площадь, доступная для намотки (разница между D_initial и D_final)
             const areaMasterTotal = Math.pow(D_master_initial, 2) - Math.pow(D_master_final, 2);
-
+            
             let areaRemainingMaster = areaMasterTotal;
             let fullRollsCount = 0;
 
@@ -653,7 +653,7 @@
             }
 
             const totalRollsExactInitial = areaMasterTotal / adjustedAreaTarget;
-
+            
             // 5. Заполнение таблицы результатами
             const tableData = []; // Массив для хранения данных перед заполнением таблицы и шерингом
 
@@ -671,7 +671,7 @@
                 cell2.textContent = exactCountDisplay;
                 cell3.textContent = distanceEdgeDisplay;
                 cell4.textContent = '—';
-
+                
                 tableData.push({
                     count: 0,
                     exact: exactCountDisplay,
@@ -695,12 +695,12 @@
                     const areaAfterThisRoll = areaMasterTotal - ((rollsAlreadyMade + 1) * adjustedAreaTarget);
                     const D_after = Math.sqrt(areaAfterThisRoll + Math.pow(D_master_final, 2));
                     const remainingDistanceAfter = (D_after - d_master) / 2;
-
+                    
                     const countDisplay = i;
                     const exactDisplay = formatNumberForDisplay(currentExactRemaining, 2);
                     const beforeDisplay = formatNumberForDisplay(remainingDistanceBefore, 1);
                     const afterDisplay = formatNumberForDisplay(remainingDistanceAfter, 1);
-
+                    
                     const cell1 = row.insertCell(0);
                     const cell2 = row.insertCell(1);
                     const cell3 = row.insertCell(2);
@@ -735,7 +735,7 @@
                 fullRollsCount: fullRollsCount,
                 totalRollsExactInitial: formatNumberForDisplay(totalRollsExactInitial, 2)
             };
-
+            
             // Сразу же показываем кнопку "Поделиться"
             document.getElementById('shareResultBtn').style.display = 'block';
         }
@@ -761,15 +761,15 @@
             shareText += `- Диаметр намотки: ${inputs.D_target} мм\n`;
             shareText += `- Шпуля намотки: ${inputs.d_target} мм\n`;
             shareText += `- Коррекция плотности (K): ${inputs.K_correction}\n`;
-
+            
             // 2. Формирование результатов
             shareText += "\n--- *РЕЗУЛЬТАТ* ---\n";
             if (fullRollsCount > 0) {
                 shareText += `✅ *Можно намотать ${fullRollsCount} шт.* (Точно: ${totalRollsExactInitial} шт.)\n`;
-
+                
                 // Берем данные по остатку после последнего полного рулона (это первая строка в массиве, т.к. цикл обратный)
                 const finalRow = tableData[0] || {};
-
+                
                 shareText += `\n*Остаток после ${fullRollsCount} шт.:*\n`;
                 shareText += `~ ${finalRow.after} мм (от шпули ${inputs.d_master} мм)`;
 
@@ -800,14 +800,10 @@
         // --- РЕЗЕРВНЫЙ ШЕРИНГ ДЛЯ СТАРЫХ БРАУЗЕРОВ/WEBVIEW/ДЕСКТОПА ---
         function fallbackShare(text) {
             const encodedText = encodeURIComponent(text);
-
+            
             // Открываем Telegram в новом окне/вкладке
             const telegramLink = `https://t.me/share/url?url=&text=${encodedText}`;
             window.open(telegramLink, '_blank');
-
-            // Также предлагаем WhatsApp (можно добавить модальное окно с выбором, но для простоты просто открываем Telegram)
-            // const whatsappLink = `https://wa.me/?text=${encodedText}`;
-            // window.open(whatsappLink, '_blank');
         }
 
         // --- ФУНКЦИИ ДЛЯ КНОПКИ СБРОСА И МОДАЛЬНОГО ОКНА ---
@@ -843,10 +839,10 @@
                 document.getElementById('resultsTable').style.display = 'none';
                 document.getElementById('tableBody').innerHTML = '';
                 document.getElementById('shareResultBtn').style.display = 'none';
-
+                
                 document.getElementById('result').textContent = 'Введите все данные для расчета.';
-                document.getElementById('result').style.color = "rgb(149, 27, 27)";
-
+                document.getElementById('result').style.color = "rgb(149, 27, 27)"; 
+                
                 latestResults = null; // Очищаем глобальные результаты
             }
         }
