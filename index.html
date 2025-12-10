@@ -225,12 +225,18 @@
             font-size: 0.9em;
             text-align: right;
             display: none;
+            
+            /* --- ИЗМЕНЕНИЕ ДЛЯ ОДИНАКОВОЙ ШИРИНЫ СТОЛБЦОВ --- */
+            table-layout: fixed; 
         }
 
         #resultsTable th,
         #resultsTable td {
             padding: 8px;
             border-bottom: 1px solid #ddd;
+            
+            /* --- ДЛЯ ПРАВИЛЬНОГО ПЕРЕНОСА ТЕКСТА В ШАПКЕ --- */
+            word-wrap: break-word; 
         }
 
         #resultsTable th {
@@ -238,6 +244,7 @@
             background-color: #007BFF;
             color: white;
             font-weight: normal;
+            vertical-align: top; /* Чтобы текст в шапке выравнивался по верху */
         }
 
         #resultsTable tbody tr:nth-child(even) {
@@ -381,7 +388,7 @@
         }
 
 
-        /* --- МОБИЛЬНАЯ АДАПТАЦИЯ (ТАБЛИЦА ТЕПЕРЬ ВСЕГДА ПОЛНАЯ) --- */
+        /* --- МОБИЛЬНАЯ АДАПТАЦИЯ (ТАБЛИЦА ТЕПЕРЬ ВСЕГДА ПОЛНАЯ И РАВНОМЕРНАЯ) --- */
         @media (max-width: 500px) {
             body {
                 padding-top: 10px;
@@ -392,8 +399,6 @@
                 margin-left: auto;
                 margin-right: auto;
             }
-            
-            /* УДАЛЕН код, скрывавший 3-й и 4-й столбцы */
         }
     </style>
 </head>
