@@ -5,7 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Расчет количества рулонов</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#007BFF">
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+
     <style>
         /* Базовые стили для светлой темы (Neumorphism) */
         body {
@@ -158,7 +162,25 @@
             background-color: #0056b3;
         }
 
-        /* --- СТИЛИ ДЛЯ SHARE-BTN УДАЛЕНЫ --- */
+        .share-btn {
+            width: 100%;
+            padding: 15px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 5px 5px 10px rgba(163, 163, 163, 0.4), -5px -5px 10px rgba(255, 255, 255, 0.8);
+            transition: background-color 0.3s;
+            display: none;
+        }
+
+        .share-btn:hover {
+            background-color: #1e7e34;
+        }
 
 
         .reset-btn {
@@ -207,18 +229,12 @@
             font-size: 0.9em;
             text-align: right;
             display: none;
-            
-            /* --- ИЗМЕНЕНИЕ ДЛЯ ОДИНАКОВОЙ ШИРИНЫ СТОЛБЦОВ --- */
-            table-layout: fixed; 
         }
 
         #resultsTable th,
         #resultsTable td {
             padding: 8px;
             border-bottom: 1px solid #ddd;
-            
-            /* --- ДЛЯ ПРАВИЛЬНОГО ПЕРЕНОСА ТЕКСТА В ШАПКЕ --- */
-            word-wrap: break-word; 
         }
 
         #resultsTable th {
@@ -226,7 +242,6 @@
             background-color: #007BFF;
             color: white;
             font-weight: normal;
-            vertical-align: top; /* Чтобы текст в шапке выравнивался по верху */
         }
 
         #resultsTable tbody tr:nth-child(even) {
@@ -328,8 +343,10 @@
             box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.4), -5px -5px 10px rgba(60, 60, 60, 0.4);
         }
 
-        /* --- СТИЛИ ДЛЯ SHARE-BTN УДАЛЕНЫ --- */
-
+        body.dark-mode .share-btn {
+            background-color: #1e7e34;
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.4), -5px -5px 10px rgba(60, 60, 60, 0.4);
+        }
 
         body.dark-mode #resultsTable th {
             background-color: #0056b3;
@@ -368,7 +385,7 @@
         }
 
 
-        /* --- МОБИЛЬНАЯ АДАПТАЦИЯ (ТАБЛИЦА ТЕПЕРЬ ВСЕГДА ПОЛНАЯ И РАВНОМЕРНАЯ) --- */
+        /* --- МОБИЛЬНАЯ АДАПТАЦИЯ --- */
         @media (max-width: 500px) {
             body {
                 padding-top: 10px;
@@ -378,6 +395,13 @@
                 width: 90%;
                 margin-left: auto;
                 margin-right: auto;
+            }
+
+            #resultsTable thead tr th:nth-child(3),
+            #resultsTable thead tr th:nth-child(4),
+            #resultsTable tbody tr td:nth-child(3),
+            #resultsTable tbody tr td:nth-child(4) {
+                display: none;
             }
         }
     </style>
@@ -436,9 +460,14 @@
                 </tr>
             </thead>
             <tbody id="tableBody">
-                </tbody>
+            </tbody>
         </table>
-        
+
+        <button class="share-btn" id="shareResultBtn" onclick="shareResults()">
+            Поделиться результатами (Telegram/WhatsApp)
+        </button>
+
+
         <div id="confirmationModal" class="modal">
             <div class="modal-content neumorphic-modal">
                 <p>Вы уверены, что хотите очистить все поля ввода?</p>
@@ -448,10 +477,11 @@
                 </div>
             </div>
         </div>
-        </div>
+    </div>
 
     <script>
-        // --- ГЛОБАЛЬНАЯ ПЕРЕМЕННАЯ ДЛЯ ХРАНЕНИЯ РЕЗУЛЬТАТОВ (УДАЛЕНА) ---
+        // --- ГЛОБАЛЬНАЯ ПЕРЕМЕННАЯ ДЛЯ ХРАНЕНИЯ РЕЗУЛЬТАТОВ ---
+        let latestResults = null;
 
         // --- ФУНКЦИЯ ДЛЯ ТЕМЫ ---
         function toggleTheme() {
@@ -481,7 +511,7 @@
         // --- ВСПОМОГАТЕЛЬНАЯ ФУНКЦИЯ ФОРМАТИРОВАНИЯ ---
         function formatNumberForDisplay(num, decimalPlaces = 1) {
             if (isNaN(num) || !isFinite(num)) return '—';
-            
+
             const fixedString = num.toFixed(decimalPlaces);
             // Возвращаем число, а не строку, чтобы избежать лишних нулей (.0)
             return decimalPlaces === 0 ? parseInt(fixedString) : parseFloat(fixedString);
@@ -516,12 +546,15 @@
         // --- КОНЕЦ ФУНКЦИИ ДЛЯ УПРАВЛЕНИЯ ПОЛЕМ ПОРЫВА ---
 
 
-        // --- ОБНОВЛЕННАЯ ФУНКЦИЯ РАСЧЕТА (ОЧИЩЕНА ОТ ЛОГИКИ ШЕРИНГА) ---
+        // --- ОБНОВЛЕННАЯ ФУНКЦИЯ РАСЧЕТА ---
         function calculateRolls() {
-            
+            // Сброс предыдущих результатов
+            latestResults = null;
+            document.getElementById('shareResultBtn').style.display = 'none';
+
             // 1. Получаем значения из полей ввода и сбрасываем предыдущие ошибки
             const inputs = ['distanceToEdge', 'distanceToRupture', 'masterCore', 'targetOuter', 'densityCorrection'];
-            inputs.forEach(id => toggleErrorClass(id, true)); 
+            inputs.forEach(id => toggleErrorClass(id, true));
 
             const distanceToEdge = parseFloat(document.getElementById('distanceToEdge').value);
             const distanceToRupture = parseFloat(document.getElementById('distanceToRupture').value);
@@ -566,7 +599,7 @@
             }
 
             // 3. Расчеты геометрии
-            
+
             // Внешний диаметр маточного рулона (до порыва), на основе distanceToEdge
             const D_master_initial = d_master + (2 * distanceToEdge);
 
@@ -614,7 +647,7 @@
 
             // Общая рабочая площадь, доступная для намотки (разница между D_initial и D_final)
             const areaMasterTotal = Math.pow(D_master_initial, 2) - Math.pow(D_master_final, 2);
-            
+
             let areaRemainingMaster = areaMasterTotal;
             let fullRollsCount = 0;
 
@@ -624,11 +657,10 @@
             }
 
             const totalRollsExactInitial = areaMasterTotal / adjustedAreaTarget;
-            
+
             // 5. Заполнение таблицы результатами
-            // Массив tableData теперь не используется, так как нет функции "Поделиться"
-            // Но логика заполнения таблицы осталась
-            
+            const tableData = []; // Массив для хранения данных перед заполнением таблицы и шерингом
+
             if (fullRollsCount === 0) {
                 const row = tableBody.insertRow();
                 const cell1 = row.insertCell(0);
@@ -643,7 +675,14 @@
                 cell2.textContent = exactCountDisplay;
                 cell3.textContent = distanceEdgeDisplay;
                 cell4.textContent = '—';
-                
+
+                tableData.push({
+                    count: 0,
+                    exact: exactCountDisplay,
+                    before: distanceEdgeDisplay,
+                    after: '—'
+                });
+
             } else {
                 for (let i = fullRollsCount; i > 0; i--) {
                     const row = tableBody.insertRow();
@@ -660,12 +699,12 @@
                     const areaAfterThisRoll = areaMasterTotal - ((rollsAlreadyMade + 1) * adjustedAreaTarget);
                     const D_after = Math.sqrt(areaAfterThisRoll + Math.pow(D_master_final, 2));
                     const remainingDistanceAfter = (D_after - d_master) / 2;
-                    
+
                     const countDisplay = i;
                     const exactDisplay = formatNumberForDisplay(currentExactRemaining, 2);
                     const beforeDisplay = formatNumberForDisplay(remainingDistanceBefore, 1);
                     const afterDisplay = formatNumberForDisplay(remainingDistanceAfter, 1);
-                    
+
                     const cell1 = row.insertCell(0);
                     const cell2 = row.insertCell(1);
                     const cell3 = row.insertCell(2);
@@ -675,14 +714,105 @@
                     cell2.textContent = exactDisplay;
                     cell3.textContent = beforeDisplay;
                     cell4.textContent = afterDisplay;
+
+                    tableData.push({
+                        count: countDisplay,
+                        exact: exactDisplay,
+                        before: beforeDisplay,
+                        after: afterDisplay
+                    });
                 }
             }
 
-            // 6. Логика для шеринга удалена
+            // 6. Сохраняем результаты и показываем кнопку "Поделиться"
+            latestResults = {
+                inputs: {
+                    distanceToEdge: distanceToEdge,
+                    distanceToRupture: useRupture ? distanceToRupture : null,
+                    d_master: d_master,
+                    D_target: D_target,
+                    d_target: d_target,
+                    K_correction: K_correction,
+                    useRupture: useRupture,
+                },
+                tableData: tableData,
+                fullRollsCount: fullRollsCount,
+                totalRollsExactInitial: formatNumberForDisplay(totalRollsExactInitial, 2)
+            };
+
+            // Сразу же показываем кнопку "Поделиться"
+            document.getElementById('shareResultBtn').style.display = 'block';
         }
 
 
-        // --- ФУНКЦИИ ДЛЯ ШЕРИНГА УДАЛЕНЫ (shareResults, fallbackShare) ---
+        // --- ФУНКЦИЯ ДЛЯ ШЕРИНГА РЕЗУЛЬТАТОВ (ОПТИМИЗИРОВАНА ДЛЯ ANDROID/iOS) ---
+        function shareResults() {
+            if (!latestResults) {
+                alert("Сначала выполните расчет.");
+                return;
+            }
+
+            const { inputs, tableData, fullRollsCount, totalRollsExactInitial } = latestResults;
+
+            // 1. Формирование входных данных
+            let shareText = "📊 *Результаты расчета рулонов* 📊\n\n";
+            shareText += `*Входные данные:*\n`;
+            shareText += `- Шпуля маточного: ${inputs.d_master} мм\n`;
+            shareText += `- Внешний край: ${inputs.distanceToEdge} мм\n`;
+            if (inputs.useRupture) {
+                shareText += `- До порыва: ${inputs.distanceToRupture} мм\n`;
+            }
+            shareText += `- Диаметр намотки: ${inputs.D_target} мм\n`;
+            shareText += `- Шпуля намотки: ${inputs.d_target} мм\n`;
+            shareText += `- Коррекция плотности (K): ${inputs.K_correction}\n`;
+
+            // 2. Формирование результатов
+            shareText += "\n--- *РЕЗУЛЬТАТ* ---\n";
+            if (fullRollsCount > 0) {
+                shareText += `✅ *Можно намотать ${fullRollsCount} шт.* (Точно: ${totalRollsExactInitial} шт.)\n`;
+
+                // Берем данные по остатку после последнего полного рулона (это первая строка в массиве, т.к. цикл обратный)
+                const finalRow = tableData[0] || {};
+
+                shareText += `\n*Остаток после ${fullRollsCount} шт.:*\n`;
+                shareText += `~ ${finalRow.after} мм (от шпули ${inputs.d_master} мм)`;
+
+            } else {
+                shareText += `❌ *Невозможно намотать ни одного рулона.* (Точно: ${totalRollsExactInitial} шт.)\n`;
+                const finalRow = tableData[0] || {};
+                shareText += `- Расстояние до края: ${finalRow.before} мм`;
+            }
+
+            // 3. Вызов нативного Web Share API (Оптимально для мобильных)
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Расчет количества рулонов',
+                    text: shareText
+                }).then(() => {
+                    console.log('Контент успешно отправлен');
+                }).catch((error) => {
+                    console.error('Ошибка при использовании Web Share API (вероятно, не на моб.устройстве):', error);
+                    // Резервный вариант для десктопа или старых WebView
+                    fallbackShare(shareText);
+                });
+            } else {
+                // 4. Резервный вариант (прямые ссылки)
+                fallbackShare(shareText);
+            }
+        }
+
+        // --- РЕЗЕРВНЫЙ ШЕРИНГ ДЛЯ СТАРЫХ БРАУЗЕРОВ/WEBVIEW/ДЕСКТОПА ---
+        function fallbackShare(text) {
+            const encodedText = encodeURIComponent(text);
+
+            // Открываем Telegram в новом окне/вкладке
+            const telegramLink = `https://t.me/share/url?url=&text=${encodedText}`;
+            window.open(telegramLink, '_blank');
+
+            // Также предлагаем WhatsApp (можно добавить модальное окно с выбором, но для простоты просто открываем Telegram)
+            // const whatsappLink = `https://wa.me/?text=${encodedText}`;
+            // window.open(whatsappLink, '_blank');
+        }
 
         // --- ФУНКЦИИ ДЛЯ КНОПКИ СБРОСА И МОДАЛЬНОГО ОКНА ---
 
@@ -713,12 +843,15 @@
                 const inputs = ['distanceToEdge', 'distanceToRupture', 'masterCore', 'targetOuter', 'densityCorrection'];
                 inputs.forEach(id => toggleErrorClass(id, true));
 
-                // Скрытие результатов и кнопки "Поделиться" (кнопка "Поделиться" уже удалена)
+                // Скрытие результатов и кнопки "Поделиться"
                 document.getElementById('resultsTable').style.display = 'none';
                 document.getElementById('tableBody').innerHTML = '';
-                
+                document.getElementById('shareResultBtn').style.display = 'none';
+
                 document.getElementById('result').textContent = 'Введите все данные для расчета.';
-                document.getElementById('result').style.color = "rgb(149, 27, 27)"; 
+                document.getElementById('result').style.color = "rgb(149, 27, 27)";
+
+                latestResults = null; // Очищаем глобальные результаты
             }
         }
 
@@ -730,6 +863,21 @@
         }
 
         // --- КОНЕЦ ФУНКЦИЙ ДЛЯ КНОПКИ СБРОСА ---
+    </script>
+    
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                // Путь должен быть './sw.js', так как он в корневой папке
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('Service Worker зарегистрирован: ', registration.scope);
+                    })
+                    .catch(err => {
+                        console.log('Ошибка регистрации Service Worker: ', err);
+                    });
+            });
+        }
     </script>
 </body>
 
