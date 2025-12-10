@@ -381,7 +381,7 @@
         }
 
 
-        /* --- МОБИЛЬНАЯ АДАПТАЦИЯ --- */
+        /* --- МОБИЛЬНАЯ АДАПТАЦИЯ (ТАБЛИЦА ТЕПЕРЬ ВСЕГДА ПОЛНАЯ) --- */
         @media (max-width: 500px) {
             body {
                 padding-top: 10px;
@@ -392,13 +392,8 @@
                 margin-left: auto;
                 margin-right: auto;
             }
-
-            #resultsTable thead tr th:nth-child(3),
-            #resultsTable thead tr th:nth-child(4),
-            #resultsTable tbody tr td:nth-child(3),
-            #resultsTable tbody tr td:nth-child(4) {
-                display: none;
-            }
+            
+            /* УДАЛЕН код, скрывавший 3-й и 4-й столбцы */
         }
     </style>
 </head>
