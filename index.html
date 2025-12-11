@@ -206,7 +206,7 @@
             border-collapse: collapse;
             margin-top: 10px;
             font-size: 0.9em;
-            text-align: right;
+            text-align: center; /* <--- ИЗМЕНЕНО: Общее выравнивание по центру */
             display: none;
             /* --- НОВЫЕ ПРАВИЛА ДЛЯ ФИКСИРОВАННОЙ ШИРИНЫ --- */
             table-layout: fixed;
@@ -218,6 +218,7 @@
             border-bottom: 1px solid #ddd;
             width: 25%; /* Каждый из 4 столбцов занимает 25% ширины */
             word-wrap: break-word; /* Позволяет длинным словам переноситься */
+            text-align: center; /* <--- ИЗМЕНЕНО: Выравнивание ячеек по центру */
         }
 
         #resultsTable th {
