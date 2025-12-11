@@ -36,18 +36,20 @@
             position: relative;
         }
 
+        /* --- ИЗМЕНЕНИЕ ДЛЯ ЛУЧШЕГО КОНТРАСТА В СВЕТЛОЙ ТЕМЕ --- */
         #themeToggle {
             position: absolute;
             top: 20px;
             right: 20px;
-            background-color: #f0f0f0;
+            background-color: #e0e0e0; /* Более темный серый для контраста */
             border: none;
             padding: 10px 12px;
             border-radius: 50%;
             cursor: pointer;
-            box-shadow: 5px 5px 10px rgba(163, 163, 163, 0.4), -5px -5px 10px rgba(255, 255, 255, 0.8);
+            box-shadow: 6px 6px 12px rgba(163, 163, 163, 0.5), -6px -6px 12px rgba(255, 255, 255, 0.7);
             font-size: 18px;
         }
+        /* -------------------------------------------------------- */
 
         .checkbox-container {
             display: flex;
@@ -332,10 +334,13 @@
             background-color: #2c2c2c;
         }
 
+        /* --- ИЗМЕНЕНИЕ ДЛЯ ЛУЧШЕГО КОНТРАСТА В ТЕМНОЙ ТЕМЕ --- */
         body.dark-mode #themeToggle {
-            background-color: #2c2c2c;
-            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.4), -5px -5px 10px rgba(60, 60, 60, 0.4);
+            background-color: #3a3a3a; /* Более светлый темный серый для контраста */
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.4), -5px -5px 10px rgba(80, 80, 80, 0.4);
         }
+        /* -------------------------------------------------------- */
+
 
         body.dark-mode .main-title-link {
             color: #4da6ff;
@@ -466,7 +471,9 @@
         window.onload = function () {
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'dark') {
-                toggleTheme();
+                // Избегаем двойного вызова при загрузке, просто устанавливаем текст для темной темы
+                document.body.classList.add('dark-mode');
+                document.getElementById('themeToggle').textContent = '☀️';
             } else {
                 document.getElementById('themeToggle').textContent = '🌙';
             }
