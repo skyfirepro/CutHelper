@@ -8,7 +8,8 @@
 
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#007BFF">
-    <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+    <link rel="apple-touch-icon" href="./ios/180.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./ios/180.png">
 
     <style>
         body {
@@ -161,27 +162,6 @@
             background-color: #0056b3;
         }
 
-        .share-btn {
-            width: 100%;
-            padding: 15px;
-            margin-top: 10px;
-            margin-bottom: 10px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 15px;
-            cursor: pointer;
-            font-size: 16px;
-            box-shadow: 5px 5px 10px rgba(163, 163, 163, 0.4), -5px -5px 10px rgba(255, 255, 255, 0.8);
-            transition: background-color 0.3s;
-            display: none;
-        }
-
-        .share-btn:hover {
-            background-color: #1e7e34;
-        }
-
-
         .reset-btn {
             width: 100%;
             padding: 15px;
@@ -228,12 +208,16 @@
             font-size: 0.9em;
             text-align: right;
             display: none;
+            /* --- НОВЫЕ ПРАВИЛА ДЛЯ ФИКСИРОВАННОЙ ШИРИНЫ --- */
+            table-layout: fixed;
         }
 
         #resultsTable th,
         #resultsTable td {
-            padding: 8px;
+            padding: 8px 4px; /* Уменьшаем padding для экономии места на мобильных */
             border-bottom: 1px solid #ddd;
+            width: 25%; /* Каждый из 4 столбцов занимает 25% ширины */
+            word-wrap: break-word; /* Позволяет длинным словам переноситься */
         }
 
         #resultsTable th {
@@ -339,11 +323,6 @@
             box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.4), -5px -5px 10px rgba(60, 60, 60, 0.4);
         }
 
-        body.dark-mode .share-btn {
-            background-color: #1e7e34;
-            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.4), -5px -5px 10px rgba(60, 60, 60, 0.4);
-        }
-
         body.dark-mode #resultsTable th {
             background-color: #0056b3;
         }
@@ -389,13 +368,6 @@
                 width: 90%;
                 margin-left: auto;
                 margin-right: auto;
-            }
-
-            #resultsTable thead tr th:nth-child(3),
-            #resultsTable thead tr th:nth-child(4),
-            #resultsTable tbody tr td:nth-child(3),
-            #resultsTable tbody tr td:nth-child(4) {
-                display: none;
             }
         }
     </style>
@@ -470,7 +442,6 @@
     </div>
 
     <script>
-
         function toggleTheme() {
             const body = document.body;
             body.classList.toggle('dark-mode');
@@ -597,13 +568,14 @@
             resultsTable.style.display = "table";
             resultElement.style.color = "initial";
 
+            // Расчет: Площадь = D^2 - d^2
             const areaTargetBase = Math.pow(D_target, 2) - Math.pow(d_target, 2);
             const adjustedAreaTarget = areaTargetBase / K_correction;
 
             const areaMasterTotal = Math.pow(D_master_initial, 2) - Math.pow(D_master_final, 2);
 
-            let areaRemainingMaster = areaMasterTotal;
             let fullRollsCount = 0;
+            let areaRemainingMaster = areaMasterTotal;
 
             while (areaRemainingMaster >= adjustedAreaTarget) {
                 fullRollsCount++;
@@ -634,10 +606,12 @@
                     const rollsAlreadyMade = fullRollsCount - i;
                     const currentExactRemaining = totalRollsExactInitial - rollsAlreadyMade;
 
+                    // Расчет остатка перед резкой этого рулона
                     const areaBeforeThisRoll = areaMasterTotal - (rollsAlreadyMade * adjustedAreaTarget);
                     const D_before = Math.sqrt(areaBeforeThisRoll + Math.pow(D_master_final, 2));
                     const remainingDistanceBefore = (D_before - d_master) / 2;
 
+                    // Расчет остатка после резкой этого рулона
                     const areaAfterThisRoll = areaMasterTotal - ((rollsAlreadyMade + 1) * adjustedAreaTarget);
                     const D_after = Math.sqrt(areaAfterThisRoll + Math.pow(D_master_final, 2));
                     const remainingDistanceAfter = (D_after - d_master) / 2;
@@ -689,7 +663,6 @@
 
                 document.getElementById('result').textContent = 'Введите все данные для расчета.';
                 document.getElementById('result').style.color = "rgb(149, 27, 27)";
-
             }
         }
 
@@ -703,6 +676,7 @@
     </script>
 
     <script>
+        // Регистрация Service Worker (для PWA и оффлайн-работы)
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
