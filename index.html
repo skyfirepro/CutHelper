@@ -206,19 +206,19 @@
             border-collapse: collapse;
             margin-top: 10px;
             font-size: 0.9em;
-            text-align: center; /* <--- ИЗМЕНЕНО: Общее выравнивание по центру */
+            text-align: center;
             display: none;
-            /* --- НОВЫЕ ПРАВИЛА ДЛЯ ФИКСИРОВАННОЙ ШИРИНЫ --- */
+            /* --- ПРАВИЛА ДЛЯ ФИКСИРОВАННОЙ ШИРИНЫ --- */
             table-layout: fixed;
         }
 
         #resultsTable th,
         #resultsTable td {
-            padding: 8px 4px; /* Уменьшаем padding для экономии места на мобильных */
+            padding: 8px 4px; 
             border-bottom: 1px solid #ddd;
-            width: 25%; /* Каждый из 4 столбцов занимает 25% ширины */
-            word-wrap: break-word; /* Позволяет длинным словам переноситься */
-            text-align: center; /* <--- ИЗМЕНЕНО: Выравнивание ячеек по центру */
+            width: 25%;
+            word-wrap: break-word; 
+            text-align: center;
         }
 
         #resultsTable th {
@@ -369,6 +369,11 @@
                 width: 90%;
                 margin-left: auto;
                 margin-right: auto;
+            }
+            /* ИСПРАВЛЕНИЕ: Поднимаем кнопку темы */
+            #themeToggle {
+                top: 10px; 
+                right: 10px; 
             }
         }
     </style>
