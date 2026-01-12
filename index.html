@@ -4,12 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Расчет количества рулонов</title>
-
-    <link rel="manifest" href="./manifest.json">
-    <meta name="theme-color" content="#007BFF">
-    <link rel="apple-touch-icon" href="./ios/180.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="./ios/180.png">
+    <title>Расчеты производства</title>
 
     <style>
         body {
@@ -27,8 +22,7 @@
         .container {
             background-color: #f0f0f0;
             border-radius: 20px;
-            box-shadow: 10px 10px 20px rgba(163, 163, 163, 0.4),
-                -10px -10px 20px rgba(255, 255, 255, 0.8);
+            box-shadow: 10px 10px 20px rgba(163, 163, 163, 0.4), -10px -10px 20px rgba(255, 255, 255, 0.8);
             width: 450px;
             transition: background-color 0.3s, color 0.3s;
             margin: 10px auto;
@@ -36,22 +30,68 @@
             position: relative;
         }
 
-        /* --- ИЗМЕНЕНИЕ ДЛЯ ЛУЧШЕГО КОНТРАСТА В СВЕТЛОЙ ТЕМЕ --- */
+        .tabs-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-right: 45px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px 5px;
+            border: none;
+            border-radius: 12px;
+            background-color: #f0f0f0;
+            color: #666;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 4px 4px 8px rgba(163, 163, 163, 0.3), -4px -4px 8px rgba(255, 255, 255, 0.7);
+            transition: all 0.2s;
+            line-height: 1.2;
+        }
+
+        .tab-btn.active {
+            box-shadow: inset 3px 3px 6px #babecc, inset -3px -3px 6px #fff;
+            color: #007BFF;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
         #themeToggle {
             position: absolute;
             top: 20px;
             right: 20px;
             background-color: #b5b3b3;
-            /* Более темный серый для контраста */
             border: none;
             padding: 10px 12px;
             border-radius: 50%;
             cursor: pointer;
             box-shadow: 6px 6px 12px rgba(163, 163, 163, 0.5), -6px -6px 12px rgba(255, 255, 255, 0.7);
             font-size: 18px;
+            z-index: 10;
         }
 
-        /* -------------------------------------------------------- */
+        /* Исправленные заголовки с коротким подчеркиванием */
+        .underlined-title {
+            display: block;
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+
+        .underlined-title span {
+            font-size: 1.1em;
+            font-weight: bold;
+            border-bottom: 2px solid #333;
+            padding-bottom: 2px;
+        }
 
         .checkbox-container {
             display: flex;
@@ -60,232 +100,88 @@
             gap: 10px;
         }
 
-        .checkbox-container .form-input-checkbox {
-            width: auto;
-            margin: 0;
-            box-shadow: none;
-            min-height: 20px;
-        }
-
-        .checkbox-container .form-label {
-            display: inline;
-            margin-top: 0;
-            font-weight: normal;
-            cursor: pointer;
-        }
-
-        .main-title-link {
-            margin-top: 15px;
-            margin-bottom: 15px;
-            text-align: center;
-            font-size: 18px;
-            color: #007BFF;
-            text-decoration: none;
-            display: block;
-            cursor: pointer;
-        }
-
-        .main-title-link:hover {
-            text-decoration: underline;
-        }
-
-        .text-underline {
-            text-decoration: none;
-            border-bottom: 1px solid currentColor;
-            display: inline;
-        }
-
-        .underlined-title {
-            display: block;
-            font-size: 1.17em;
-            font-weight: bold;
-            margin-top: 25px;
-            margin-bottom: 15px;
-        }
-
-        .correction-label {
-            font-size: 1.17em;
-            margin-top: 25px;
-            margin-bottom: 5px;
-        }
-
         .form-label {
             display: block;
             margin-top: 15px;
             font-weight: bold;
+            font-size: 14px;
         }
 
         .form-input,
         .form-select {
             width: 100%;
-            padding: 10px;
-            margin-top: 10px;
+            padding: 12px;
+            margin-top: 8px;
             box-sizing: border-box;
             border: none;
             border-radius: 10px;
             background-color: #f0f0f0;
             color: #333;
             box-shadow: inset 5px 5px 10px #babecc, inset -5px -5px 10px #fff;
-            transition: box-shadow 0.3s, border-color 0.3s;
+            font-size: 14px;
         }
 
-        .form-input.input-error {
-            border: 1px solid #dc3545;
-            box-shadow: inset 2px 2px 5px #dc354566, inset -2px -2px 5px #dc354566;
-        }
-
-        .form-input:disabled,
-        .form-select:disabled {
+        .form-input:disabled {
             background-color: #e0e0e0;
             color: #999;
-            box-shadow: inset 2px 2px 5px #babecc, inset -2px -2px 5px #fff;
             cursor: default;
-            border-color: transparent;
-        }
-
-        .form-input:not(:disabled),
-        .form-select:not(:disabled) {
-            cursor: text;
+            opacity: 0.6;
         }
 
         .calculate-btn {
             width: 100%;
             padding: 15px;
-            margin-top: 30px;
-            margin-bottom: 10px;
+            margin-top: 25px;
             background-color: #007BFF;
             color: white;
             border: none;
             border-radius: 15px;
             cursor: pointer;
             font-size: 16px;
+            font-weight: bold;
             box-shadow: 5px 5px 10px rgba(163, 163, 163, 0.4), -5px -5px 10px rgba(255, 255, 255, 0.8);
-        }
-
-        .calculate-btn:hover {
-            background-color: #0056b3;
         }
 
         .reset-btn {
             width: 100%;
             padding: 15px;
             margin-top: 15px;
-            margin-bottom: 10px;
             background-color: #dc3545;
             color: white;
             border: none;
             border-radius: 15px;
             cursor: pointer;
             font-size: 16px;
-            box-shadow: 5px 5px 10px rgba(163, 163, 163, 0.4), -5px -5px 10px rgba(255, 255, 255, 0.8);
-            transition: background-color 0.3s;
-        }
-
-        .reset-btn:hover {
-            background-color: #c82333;
-        }
-
-        .result-title {
-            font-size: 22px;
-            margin-top: 15px;
-            margin-bottom: 25px;
-            text-align: center;
-        }
-
-        h3 {
-            margin: 0;
-        }
-
-
-        #result {
-            font-size: 1em;
-            font-weight: bold;
-            color: rgb(149, 27, 27);
-            margin-top: 0;
-            margin-bottom: 15px;
         }
 
         #resultsTable {
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
-            font-size: 0.9em;
-            text-align: center;
+            font-size: 0.75em;
             display: none;
-            /* --- ПРАВИЛА ДЛЯ ФИКСИРОВАННОЙ ШИРИНЫ --- */
             table-layout: fixed;
         }
 
-        #resultsTable th,
-        #resultsTable td {
-            padding: 8px 4px;
-            border-bottom: 1px solid #ddd;
-            width: 25%;
-            word-wrap: break-word;
-            text-align: center;
-        }
-
         #resultsTable th {
-            text-align: center;
             background-color: #007BFF;
             color: white;
-            font-weight: normal;
+            padding: 8px 2px;
+            border: 1px solid #fff;
         }
 
-        #resultsTable tbody tr:nth-child(even) {
-            background-color: #e6e6e6;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            padding: 20px;
-            border-radius: 15px;
+        #resultsTable td {
+            padding: 8px 2px;
+            border: 1px solid #ddd;
             text-align: center;
-            width: 80%;
-            max-width: 300px;
-            color: #333;
         }
 
-        .modal-content.neumorphic-modal {
-            background-color: #f0f0f0;
-            box-shadow: 10px 10px 20px rgba(163, 163, 163, 0.4), -10px -10px 20px rgba(255, 255, 255, 0.8);
-        }
-
-        .modal-buttons {
-            margin-top: 20px;
-            display: flex;
-            justify-content: space-around;
-        }
-
-        .modal-buttons button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 16px;
-            box-shadow: 5px 5px 10px rgba(163, 163, 163, 0.4), -5px -5px 10px rgba(255, 255, 255, 0.8);
-        }
-
-        .modal-buttons button:first-child {
-            background-color: #dc3545;
-            color: white;
-        }
-
-        .modal-buttons button:last-child {
-            background-color: #f0f0f0;
-            color: #333;
+        #shaftVisual {
+            background: #f0f0f0;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: inset 4px 4px 8px #babecc, inset -4px -4px 8px #fff;
+            margin-top: 15px;
         }
 
         body.dark-mode {
@@ -295,417 +191,249 @@
 
         body.dark-mode .container {
             background-color: #1e1e1e;
-            box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.4),
-                -10px -10px 20px rgba(60, 60, 60, 0.4);
+            box-shadow: 10px 10px 20px #000, -10px -10px 20px #3c3c3c;
+        }
+
+        body.dark-mode .underlined-title span {
+            border-bottom-color: #e0e0e0;
         }
 
         body.dark-mode .form-input,
         body.dark-mode .form-select {
             background-color: #1e1e1e;
             color: #e0e0e0;
-            box-shadow: inset 5px 5px 10px rgba(0, 0, 0, 0.4), inset -5px -5px 10px rgba(60, 60, 60, 0.4);
+            box-shadow: inset 5px 5px 10px #000, inset -5px -5px 10px #3c3c3c;
         }
 
-        body.dark-mode .form-input.input-error {
-            border: 1px solid #ff6666;
-            box-shadow: inset 2px 2px 5px #ff666666, inset -2px -2px 5px #ff666666;
+        body.dark-mode #shaftVisual {
+            background: #1e1e1e;
+            box-shadow: inset 4px 4px 8px #000, inset -4px -4px 8px #3c3c3c;
         }
 
-        body.dark-mode .form-input:disabled,
-        body.dark-mode .form-select:disabled {
-            background-color: #2c2c2c;
-            color: #777;
-            box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.4), inset -2px -2px 5px rgba(60, 60, 60, 0.4);
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
         }
 
-        body.dark-mode .calculate-btn {
-            background-color: #0056b3;
-            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.4), -5px -5px 10px rgba(60, 60, 60, 0.4);
+        .modal-content {
+            padding: 25px;
+            border-radius: 20px;
+            background: #f0f0f0;
+            text-align: center;
+            width: 80%;
         }
 
-        body.dark-mode .reset-btn {
-            background-color: #a33b47;
-            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.4), -5px -5px 10px rgba(60, 60, 60, 0.4);
-        }
-
-        body.dark-mode #resultsTable th {
-            background-color: #0056b3;
-        }
-
-        body.dark-mode #resultsTable tbody tr:nth-child(even) {
-            background-color: #2c2c2c;
-        }
-
-        /* --- ИЗМЕНЕНИЕ ДЛЯ ЛУЧШЕГО КОНТРАСТА В ТЕМНОЙ ТЕМЕ --- */
-        body.dark-mode #themeToggle {
-            background-color: #626262;
-            /* Более светлый темный серый для контраста */
-            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.4), -5px -5px 10px rgba(80, 80, 80, 0.4);
-        }
-
-        /* -------------------------------------------------------- */
-
-
-        body.dark-mode .main-title-link {
-            color: #4da6ff;
-        }
-
-        body.dark-mode .result-title {
-            color: #ffffff;
-        }
-
-        body.dark-mode .modal-content.neumorphic-modal {
-            background-color: #1e1e1e;
-            box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.4), -10px -10px 20px rgba(60, 60, 60, 0.4);
-            color: #e0e0e0;
-        }
-
-        body.dark-mode .modal-buttons button {
-            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.4), -5px -5px 10px rgba(60, 60, 60, 0.4);
-        }
-
-        body.dark-mode .modal-buttons button:last-child {
-            background-color: #1e1e1e;
-            color: #e0e0e0;
-        }
-
-        @media (max-width: 500px) {
-            body {
-                padding-top: 10px;
-            }
-
-            .container {
-                width: 90%;
-                margin-left: auto;
-                margin-right: auto;
-            }
-
-            /* ИСПРАВЛЕНИЕ: Поднимаем кнопку темы */
-            #themeToggle {
-                top: 0px;
-                right: 10px;
-            }
+        body.dark-mode .modal-content {
+            background: #1e1e1e;
         }
     </style>
 </head>
 
 <body>
-    <div class="container" id="calculatorContainer">
-        <button id="themeToggle" onclick="toggleTheme()"></button>
-
-        <h2 class="main-title-link">
-            Расчет количества <br> намоточных рулонов и остатка
-        </h2>
-
-        <div class="underlined-title"><span class="text-underline">Маточный рулон</span></div>
-        <label for="distanceToEdge" class="form-label">Расстояние от шпули до внешнего края фольги (мм):</label>
-        <input type="number" id="distanceToEdge" class="form-input">
-
-        <div class="checkbox-container">
-            <input type="checkbox" id="useRupture" onchange="toggleRuptureField()" class="form-input-checkbox">
-            <label for="useRupture" class="form-label">Рассчитать до порыва</label>
+    <div class="container">
+        <button id="themeToggle" onclick="toggleTheme()">🌙</button>
+        <div class="tabs-nav">
+            <button class="tab-btn active" onclick="openTab('rollsTab')">Количество <br> рулонов</button>
+            <button class="tab-btn" onclick="openTab('shaftTab')">Раскрой</button>
         </div>
-        <label for="distanceToRupture" class="form-label">Расстояние от шпули до порыва (мм):</label>
-        <input type="number" id="distanceToRupture" disabled class="form-input">
-        <label for="masterCore" class="form-label">Диаметр шпули маточного рулона (мм):</label>
-        <input type="number" id="masterCore" value="660" class="form-input">
 
-        <div class="underlined-title"><span class="text-underline">Намоточный рулон</span></div>
-        <label for="targetOuter" class="form-label">Конечный (номинальный) диаметр намоточного рулона (мм):</label>
-        <input type="number" id="targetOuter" class="form-input">
+        <div id="rollsTab" class="tab-content active">
+            <h2 style="text-align: center; color: #007BFF; font-size: 18px;">Расчет рулонов и остатка</h2>
 
-        <label for="targetCoreSelector" class="form-label">Диаметр намоточной шпули (мм):</label>
-        <select id="targetCoreSelector" class="form-select">
-            <option value="81.2">81.2 (вн. диаметр 76.2 + стенка 2.5)</option>
-            <option value="158.4">158.4 (вн. диаметр 152.4 + стенка 3)</option>
-        </select>
+            <div class="underlined-title"><span>Маточный рулон</span></div>
 
-        <label for="densityCorrection" class="form-label correction-label">
-            <span class="text-underline">Коэффициент корректировки плотности</span>
-        </label>
-        <input type="number" id="densityCorrection" value="1.0" step="0.01" class="form-input">
+            <label class="form-label">Расстояние от шпули до края фольги (мм):</label>
+            <input type="number" id="distanceToEdge" class="form-input">
 
-        <button class="calculate-btn" onclick="calculateRolls()">Рассчитать количество</button>
+            <div class="checkbox-container">
+                <input type="checkbox" id="useRupture" onchange="toggleRuptureField()">
+                <label for="useRupture">Рассчитать до порыва</label>
+            </div>
 
-        <button class="reset-btn" onclick="showResetConfirmation()">Сбросить данные</button>
+            <label class="form-label">Расстояние от шпули до порыва (мм):</label>
+            <input type="number" id="distanceToRupture" disabled class="form-input">
 
-        <h2 class="result-title">Результат:</h2>
-        <p id="result">Введите все данные для расчета.</p>
+            <label class="form-label">Диаметр шпули маточного рулона (мм):</label>
+            <input type="number" id="masterCore" value="660" class="form-input">
 
-        <table id="resultsTable">
-            <thead>
-                <tr>
-                    <th>Количество рулонов (шт)</th>
-                    <th>Точное количество (шт)</th>
-                    <th>Остаток на шпуле перед резкой (мм)</th>
-                    <th>Остаток на шпуле после резкой (мм)</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody">
-            </tbody>
-        </table>
+            <div class="underlined-title"><span>Намоточный рулон</span></div>
 
+            <label class="form-label">Номинальный диаметр (мм):</label>
+            <input type="number" id="targetOuter" class="form-input">
 
-        <div id="confirmationModal" class="modal">
-            <div class="modal-content neumorphic-modal">
-                <p>Вы уверены, что хотите очистить все поля ввода?</p>
-                <div class="modal-buttons">
-                    <button onclick="resetForm(true)">Да</button>
-                    <button onclick="resetForm(false)">Нет</button>
-                </div>
+            <label class="form-label">Диаметр намоточной шпули (мм):</label>
+            <select id="targetCoreSelector" class="form-select">
+                <option value="81.2">81.2 (76.2 + 2.5)</option>
+                <option value="158.4">158.4 (152.4 + 3)</option>
+            </select>
+
+            <label class="form-label">Коэффициент плотности</label>
+            <input type="number" id="densityCorrection" value="0.98" step="0.01" class="form-input">
+
+            <button class="calculate-btn" onclick="calculateRolls()">Рассчитать</button>
+            <button class="reset-btn" onclick="showReset()">Сбросить данные</button>
+
+            <table id="resultsTable">
+                <thead>
+                    <tr>
+                        <th>Количество рулонов (шт)</th>
+                        <th>Точное количество (шт)</th>
+                        <th>Остаток на шпуле перед резкой (мм)</th>
+                        <th>Остаток на шпуле после резки (мм)</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+
+        <div id="shaftTab" class="tab-content">
+            <h2 style="text-align: center; color: #007BFF; font-size: 18px;">Расчет раскроя</h2>
+            <label class="form-label">Ширина маточного рулона (мм):</label>
+            <input type="number" id="masterWidth" class="form-input">
+
+            <div class="checkbox-container">
+                <input type="checkbox" id="useManualCount1" onchange="toggleManualInputs()">
+                <label for="useManualCount1">Количество рулонов заказа №1</label>
+            </div>
+            <input type="number" id="manualCount1" disabled class="form-input" placeholder="Введите кол-во">
+
+            <label class="form-label">Ширина заказа №1 (мм):</label>
+            <input type="number" id="targetWidth1" class="form-input">
+
+            <div class="checkbox-container">
+                <input type="checkbox" id="useSecondOrder" onchange="toggleManualInputs()">
+                <label for="useSecondOrder">2 заказ (дополнительный)</label>
+            </div>
+
+            <div class="checkbox-container" id="manualCount2Box" style="display:none;">
+                <input type="checkbox" id="useManualCount2" onchange="toggleManualInputs()">
+                <label for="useManualCount2">Количество рулонов заказа №2</label>
+            </div>
+            <input type="number" id="manualCount2" disabled class="form-input" placeholder="Введите кол-во">
+
+            <label class="form-label">Ширина заказа №2 (мм):</label>
+            <input type="number" id="targetWidth2" disabled class="form-input">
+
+            <label class="form-label">Кромка (слева, мм):</label>
+            <input type="number" id="edgeWidth" value="10" class="form-input">
+
+            <button class="calculate-btn" onclick="calculateShaft()">Рассчитать раскрой</button>
+
+            <div id="shaftResult" style="margin-top: 25px; display: none;">
+                <div class="underlined-title"><span>Результат раскроя:</span></div>
+                <div id="shaftVisual"></div>
+            </div>
+        </div>
+
+        <div id="modalReset" class="modal">
+            <div class="modal-content">
+                <p>Очистить все поля ввода?</p>
+                <button class="calculate-btn" onclick="location.reload()">Да</button>
+                <button class="reset-btn" onclick="closeReset()">Нет</button>
             </div>
         </div>
     </div>
 
     <script>
+        function openTab(id) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
         function toggleTheme() {
-            const body = document.body;
-            body.classList.toggle('dark-mode');
-            const themeButton = document.getElementById('themeToggle');
-
-            if (body.classList.contains('dark-mode')) {
-                themeButton.textContent = '☀️';
-                localStorage.setItem('theme', 'dark');
-            } else {
-                themeButton.textContent = '🌙';
-                localStorage.setItem('theme', 'light');
-            }
+            const isDark = document.body.classList.toggle('dark-mode');
+            document.getElementById('themeToggle').textContent = isDark ? '☀️' : '🌙';
         }
 
-        window.onload = function () {
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'dark') {
-                // Избегаем двойного вызова при загрузке, просто устанавливаем текст для темной темы
-                document.body.classList.add('dark-mode');
-                document.getElementById('themeToggle').textContent = '☀️';
-            } else {
-                document.getElementById('themeToggle').textContent = '🌙';
-            }
-        }
-        function formatNumberForDisplay(num, decimalPlaces = 1) {
-            if (isNaN(num) || !isFinite(num)) return '—';
+        function toggleRuptureField() { document.getElementById('distanceToRupture').disabled = !document.getElementById('useRupture').checked; }
 
-            const fixedString = num.toFixed(decimalPlaces);
-            return decimalPlaces === 0 ? parseInt(fixedString) : parseFloat(fixedString);
-        }
-
-        function toggleErrorClass(elementId, isValid) {
-            const element = document.getElementById(elementId);
-            if (element) {
-                if (isValid) {
-                    element.classList.remove('input-error');
-                } else {
-                    element.classList.add('input-error');
-                }
-            }
-        }
-
-        function toggleRuptureField() {
-            const useRuptureCheckbox = document.getElementById('useRupture');
-            const distanceToRuptureInput = document.getElementById('distanceToRupture');
-
-            if (useRuptureCheckbox.checked) {
-                distanceToRuptureInput.disabled = false;
-            } else {
-                distanceToRuptureInput.disabled = true;
-                distanceToRuptureInput.value = '';
-                toggleErrorClass('distanceToRupture', true);
-            }
+        function toggleManualInputs() {
+            const use2 = document.getElementById('useSecondOrder').checked;
+            document.getElementById('targetWidth2').disabled = !use2;
+            document.getElementById('manualCount2Box').style.display = use2 ? 'flex' : 'none';
+            document.getElementById('manualCount1').disabled = !document.getElementById('useManualCount1').checked;
+            document.getElementById('manualCount2').disabled = !(use2 && document.getElementById('useManualCount2').checked);
         }
 
         function calculateRolls() {
-            const inputs = ['distanceToEdge', 'distanceToRupture', 'masterCore', 'targetOuter', 'densityCorrection'];
-            inputs.forEach(id => toggleErrorClass(id, true));
+            const dEdge = parseFloat(document.getElementById('distanceToEdge').value);
+            const DTarget = parseFloat(document.getElementById('targetOuter').value);
+            const dMaster = parseFloat(document.getElementById('masterCore').value);
+            const kCorr = parseFloat(document.getElementById('densityCorrection').value);
+            const dTargetCore = parseFloat(document.getElementById('targetCoreSelector').value);
+            if (isNaN(dEdge) || isNaN(DTarget)) return;
 
-            const distanceToEdge = parseFloat(document.getElementById('distanceToEdge').value);
-            const distanceToRupture = parseFloat(document.getElementById('distanceToRupture').value);
-            const useRupture = document.getElementById('useRupture').checked;
-            const d_master = parseFloat(document.getElementById('masterCore').value);
-            const D_target = parseFloat(document.getElementById('targetOuter').value);
-            const d_target = parseFloat(parseFloat(document.getElementById('targetCoreSelector').value).toFixed(1));
-            const K_correction = parseFloat(document.getElementById('densityCorrection').value);
-            const resultElement = document.getElementById('result');
-            const tableBody = document.getElementById('tableBody');
-            const resultsTable = document.getElementById('resultsTable');
+            const tTable = document.getElementById('resultsTable');
+            const tBody = document.getElementById('tableBody');
+            tBody.innerHTML = ''; tTable.style.display = 'table';
 
-            resultElement.style.color = "red";
-            resultsTable.style.display = "none";
-            tableBody.innerHTML = '';
+            const DM_initial = dMaster + (2 * dEdge);
+            const DM_final = document.getElementById('useRupture').checked ? dMaster + (2 * (parseFloat(document.getElementById('distanceToRupture').value) || 0)) : dMaster;
+            const areaTarget = (Math.pow(DTarget, 2) - Math.pow(dTargetCore, 2)) / kCorr;
+            const areaMaster = Math.pow(DM_initial, 2) - Math.pow(DM_final, 2);
+            const totalExact = areaMaster / areaTarget;
+            const fullRolls = Math.floor(totalExact);
 
-            let hasError = false;
-
-            if (isNaN(distanceToEdge) || distanceToEdge <= 0) {
-                toggleErrorClass('distanceToEdge', false);
-                hasError = true;
-            }
-
-            if (useRupture && (isNaN(distanceToRupture) || distanceToRupture <= 0)) {
-                toggleErrorClass('distanceToRupture', false);
-                hasError = true;
-            }
-
-            if (isNaN(d_master) || d_master <= 0) { toggleErrorClass('masterCore', false); hasError = true; }
-            if (isNaN(D_target) || D_target <= 0) { toggleErrorClass('targetOuter', false); hasError = true; }
-            if (isNaN(K_correction) || K_correction <= 0) { toggleErrorClass('densityCorrection', false); hasError = true; }
-
-
-            if (hasError) {
-                resultElement.textContent = "Ошибка ввода: заполните выделенные поля корректными числовыми значениями.";
-                return;
-            }
-
-            const D_master_initial = d_master + (2 * distanceToEdge);
-
-            let D_master_final;
-
-            if (useRupture) {
-                D_master_final = d_master + (2 * distanceToRupture);
-
-                if (D_master_final >= D_master_initial) {
-                    resultElement.textContent = "Ошибка логики: Расстояние до порыва не может быть больше или равно расстоянию до внешнего края рулона.";
-                    toggleErrorClass('distanceToRupture', false);
-                    return;
-                }
-            } else {
-                D_master_final = d_master;
-            }
-
-            if (D_target <= d_target) {
-                resultElement.textContent = "Ошибка логики: Конечный диаметр намотки должен быть больше диаметра намоточной шпули.";
-                toggleErrorClass('targetOuter', false);
-                return;
-            }
-            if (D_master_initial < D_target) {
-                resultElement.textContent = "Ошибка логики: Конечный диаметр намотки не может быть больше, чем внешний диаметр маточного рулона.";
-                toggleErrorClass('targetOuter', false);
-                toggleErrorClass('distanceToEdge', false);
-                return;
-            }
-
-            resultElement.textContent = "";
-            resultsTable.style.display = "table";
-            resultElement.style.color = "initial";
-
-            // Расчет: Площадь = D^2 - d^2
-            const areaTargetBase = Math.pow(D_target, 2) - Math.pow(d_target, 2);
-            const adjustedAreaTarget = areaTargetBase / K_correction;
-
-            const areaMasterTotal = Math.pow(D_master_initial, 2) - Math.pow(D_master_final, 2);
-
-            let fullRollsCount = 0;
-            let areaRemainingMaster = areaMasterTotal;
-
-            while (areaRemainingMaster >= adjustedAreaTarget) {
-                fullRollsCount++;
-                areaRemainingMaster -= adjustedAreaTarget;
-            }
-
-            const totalRollsExactInitial = areaMasterTotal / adjustedAreaTarget;
-
-            if (fullRollsCount === 0) {
-                const row = tableBody.insertRow();
-                const cell1 = row.insertCell(0);
-                const cell2 = row.insertCell(1);
-                const cell3 = row.insertCell(2);
-                const cell4 = row.insertCell(3);
-
-                const exactCountDisplay = formatNumberForDisplay(totalRollsExactInitial, 2);
-                const distanceEdgeDisplay = formatNumberForDisplay(distanceToEdge, 1);
-
-                cell1.textContent = '0';
-                cell2.textContent = exactCountDisplay;
-                cell3.textContent = distanceEdgeDisplay;
-                cell4.textContent = '—';
-
-            } else {
-                for (let i = fullRollsCount; i > 0; i--) {
-                    const row = tableBody.insertRow();
-
-                    const rollsAlreadyMade = fullRollsCount - i;
-                    const currentExactRemaining = totalRollsExactInitial - rollsAlreadyMade;
-
-                    // Расчет остатка перед резкой этого рулона
-                    const areaBeforeThisRoll = areaMasterTotal - (rollsAlreadyMade * adjustedAreaTarget);
-                    const D_before = Math.sqrt(areaBeforeThisRoll + Math.pow(D_master_final, 2));
-                    const remainingDistanceBefore = (D_before - d_master) / 2;
-
-                    // Расчет остатка после резкой этого рулона
-                    const areaAfterThisRoll = areaMasterTotal - ((rollsAlreadyMade + 1) * adjustedAreaTarget);
-                    const D_after = Math.sqrt(areaAfterThisRoll + Math.pow(D_master_final, 2));
-                    const remainingDistanceAfter = (D_after - d_master) / 2;
-
-                    const countDisplay = i;
-                    const exactDisplay = formatNumberForDisplay(currentExactRemaining, 2);
-                    const beforeDisplay = formatNumberForDisplay(remainingDistanceBefore, 1);
-                    const afterDisplay = formatNumberForDisplay(remainingDistanceAfter, 1);
-
-                    const cell1 = row.insertCell(0);
-                    const cell2 = row.insertCell(1);
-                    const cell3 = row.insertCell(2);
-                    const cell4 = row.insertCell(3);
-
-                    cell1.textContent = countDisplay;
-                    cell2.textContent = exactDisplay;
-                    cell3.textContent = beforeDisplay;
-                    cell4.textContent = afterDisplay;
-                }
+            for (let i = fullRolls; i > 0; i--) {
+                const made = fullRolls - i;
+                const aBefore = areaMaster - (made * areaTarget);
+                const aAfter = areaMaster - ((made + 1) * areaTarget);
+                const distB = (Math.sqrt(aBefore + Math.pow(DM_final, 2)) - dMaster) / 2;
+                const distA = (Math.sqrt(aAfter + Math.pow(DM_final, 2)) - dMaster) / 2;
+                tBody.innerHTML += `<tr><td>${i}</td><td>${(totalExact - made).toFixed(2)}</td><td>${distB.toFixed(1)}</td><td>${distA.toFixed(1)}</td></tr>`;
             }
         }
 
-        function showResetConfirmation() {
-            const modal = document.getElementById('confirmationModal');
-            modal.style.display = 'flex';
-        }
+        function calculateShaft() {
+            const master = parseFloat(document.getElementById('masterWidth').value);
+            const w1 = parseFloat(document.getElementById('targetWidth1').value);
+            const edge = parseFloat(document.getElementById('edgeWidth').value) || 0;
+            const use2 = document.getElementById('useSecondOrder').checked;
+            const w2 = use2 ? parseFloat(document.getElementById('targetWidth2').value) : 0;
+            if (isNaN(master) || isNaN(w1)) return;
 
-        function resetForm(confirmed) {
-            const modal = document.getElementById('confirmationModal');
-            modal.style.display = 'none';
+            let curW = master - edge;
+            let c1 = document.getElementById('useManualCount1').checked ? (parseInt(document.getElementById('manualCount1').value) || 0) : Math.floor(curW / w1);
+            if (c1 * w1 > curW) c1 = Math.floor(curW / w1);
+            const totalW1 = c1 * w1;
+            curW -= totalW1;
 
-            if (confirmed) {
-                document.getElementById('distanceToEdge').value = '';
-                document.getElementById('distanceToRupture').value = '';
-                document.getElementById('useRupture').checked = false;
-
-                toggleRuptureField();
-
-                document.getElementById('masterCore').value = '660';
-                document.getElementById('targetOuter').value = '';
-                document.getElementById('targetCoreSelector').value = '81.2';
-                document.getElementById('densityCorrection').value = '1.0';
-
-                const inputs = ['distanceToEdge', 'distanceToRupture', 'masterCore', 'targetOuter', 'densityCorrection'];
-                inputs.forEach(id => toggleErrorClass(id, true));
-
-                document.getElementById('resultsTable').style.display = 'none';
-                document.getElementById('tableBody').innerHTML = '';
-
-                document.getElementById('result').textContent = 'Введите все данные для расчета.';
-                document.getElementById('result').style.color = "rgb(149, 27, 27)";
+            let c2 = 0;
+            if (use2 && w2 > 0) {
+                c2 = document.getElementById('useManualCount2').checked ? (parseInt(document.getElementById('manualCount2').value) || 0) : Math.floor(curW / w2);
+                if (c2 * w2 > curW) c2 = Math.floor(curW / w2);
             }
+            const totalW2 = c2 * w2;
+            curW -= totalW2;
+
+            document.getElementById('shaftResult').style.display = 'block';
+            document.getElementById('shaftVisual').innerHTML = `
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <div style="display: flex; justify-content: space-between;"><span>Заказ №1 (${w1} мм):</span> <strong>${c1} шт.</strong></div>
+                    ${use2 ? `<div style="display: flex; justify-content: space-between;"><span>Заказ №2 (${w2} мм):</span> <strong>${c2} шт.</strong></div>` : ''}
+                    <hr style="border:0; border-top:1px solid #ccc; opacity: 0.3;">
+                    <div style="display: flex; justify-content: space-between;"><span>Кромка (слева):</span> <strong>${edge} мм</strong></div>
+                    <div style="display: flex; justify-content: space-between; padding: 10px; background: rgba(0, 123, 255, 0.15); border-radius: 8px;">
+                        <span>Сумма рулонов:</span> <strong style="color: #007BFF;">${(totalW1 + totalW2).toFixed(1)} мм</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;"><span>Спутник (справа):</span> <strong>${curW.toFixed(1)} мм</strong></div>
+                    <hr style="border:0; border-top:1px solid #ccc; opacity: 0.3;">
+                    <div style="display: flex; justify-content: space-between;"><span>Общая ширина обрези:</span> <strong style="color: #dc3545;">${(edge + curW).toFixed(1)} мм</strong></div>
+                </div>`;
         }
 
-        window.onclick = function (event) {
-            const modal = document.getElementById('confirmationModal');
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
-
-    </script>
-
-    <script>
-        // Регистрация Service Worker (для PWA и оффлайн-работы)
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(registration => {
-                        console.log('Service Worker зарегистрирован: ', registration.scope);
-                    })
-                    .catch(err => {
-                        console.log('Ошибка регистрации Service Worker: ', err);
-                    });
-            });
-        }
+        function showReset() { document.getElementById('modalReset').style.display = 'flex'; }
+        function closeReset() { document.getElementById('modalReset').style.display = 'none'; }
     </script>
 </body>
 
