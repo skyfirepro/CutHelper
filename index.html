@@ -243,6 +243,7 @@
         <div class="tabs-nav">
             <button class="tab-btn active" onclick="openTab('rollsTab')">Количество <br> рулонов</button>
             <button class="tab-btn" onclick="openTab('shaftTab')">Раскрой</button>
+                <button class="tab-btn" onclick="openTab('setupTab')">Перенастройка</button>
         </div>
 
         <div id="rollsTab" class="tab-content active">
@@ -296,34 +297,52 @@
 
         <div id="shaftTab" class="tab-content">
             <h2 style="text-align: center; color: #007BFF; font-size: 18px;">Расчет раскроя</h2>
-            <label class="form-label">Ширина маточного рулона (мм):</label>
+            
+            <div class="underlined-title"><span>Маточный рулон</span></div>
+            
+            <label class="form-label">Ширина (мм):</label>
             <input type="number" id="masterWidth" class="form-input">
 
-            <div class="checkbox-container">
-                <input type="checkbox" id="useManualCount1" onchange="toggleManualInputs()">
-                <label for="useManualCount1">Количество рулонов заказа №1</label>
-            </div>
-            <input type="number" id="manualCount1" disabled class="form-input" placeholder="Введите кол-во">
+            <div class="underlined-title"><span>Заказ №1</span></div>   
 
             <label class="form-label">Ширина заказа №1 (мм):</label>
             <input type="number" id="targetWidth1" class="form-input">
 
             <div class="checkbox-container">
-                <input type="checkbox" id="useSecondOrder" onchange="toggleManualInputs()">
-                <label for="useSecondOrder">2 заказ (дополнительный)</label>
+                <input type="checkbox" id="useManualCount1" onchange="toggleManualInputs()">
+                <label for="useManualCount1">Количество рулонов</label>
             </div>
+            <input type="number" id="manualCount1" disabled class="form-input" placeholder="Введите кол-во">
 
-            <div class="checkbox-container" id="manualCount2Box" style="display:none;">
-                <input type="checkbox" id="useManualCount2" onchange="toggleManualInputs()">
-                <label for="useManualCount2">Количество рулонов заказа №2</label>
+            <div class="underlined-title">
+                <input type="checkbox" id="useSecondOrder" onchange="toggleManualInputs()">
+                <span>Заказ №2</span>
             </div>
-            <input type="number" id="manualCount2" disabled class="form-input" placeholder="Введите кол-во">
 
             <label class="form-label">Ширина заказа №2 (мм):</label>
             <input type="number" id="targetWidth2" disabled class="form-input">
 
-            <label class="form-label">Кромка (слева, мм):</label>
+            <div class="checkbox-container">
+                <label for="useSecondOrder">Количество рулонов</label>
+            </div>
+            
+            <div class="checkbox-container" id="manualCount2Box">
+                <input type="checkbox" id="useManualCount2" onchange="toggleManualInputs()">
+                <label for="useManualCount2">Количество рулонов</label>
+            </div>
+            <input type="number" id="manualCount2" disabled class="form-input" placeholder="Введите кол-во">
+
+            <div class="underlined-title"><span>Обрезь</span></div>
+
+            <label class="form-label">Кромка/спутник (слева, мм):</label>
+            <div class="checkbox-container" style="margin-bottom: 8px;">
+                <input type="checkbox" id="splitEdges" onchange="toggleEdgeFields()">
+                <label for="splitEdges">Разделить поровну</label>
+            </div>
             <input type="number" id="edgeWidth" value="10" class="form-input">
+
+            <label class="form-label">Кромка/спутник (справа, мм):</label>
+            <input type="number" id="edgeWidthRight" value="10" class="form-input" placeholder="">
 
             <button class="calculate-btn" onclick="calculateShaft()">Рассчитать раскрой</button>
 
@@ -332,6 +351,55 @@
                 <div id="shaftVisual"></div>
             </div>
         </div>
+
+        <div id="setupTab" class="tab-content">
+            <h2 style="text-align: center; color: #007BFF; font-size: 18px;">Перенастройка</h2>
+            <div class="underlined-title"><span>Ширина ножевого вала (мм)</span></div>
+            <select id="shaftWidthSelect" class="form-select" style="margin-bottom: 20px;">
+                <option value="1700">1700 (C4-1/3)</option>
+                <option value="1620">1620 (C4-4)</option>
+            </select>
+
+            <div class="underlined-title"><span>Настройка №1</span></div>
+            <label class="form-label">Ширина маточного рулона (мм):</label>
+            <input type="number" id="setupMasterWidth1" class="form-input" style="margin-bottom: 16px;">
+                <label class="form-label">Ширина заказа (мм):</label>
+                <input type="number" id="setupOrderWidth1" class="form-input" style="margin-bottom: 12px;">
+                <label class="form-label">Количество рулонов:</label>
+                <input type="number" id="setupOrderCount1" class="form-input" style="margin-bottom: 16px;">
+
+            <div class="underlined-title"><span>Настройка №2</span></div>
+            <label class="form-label">Ширина маточного рулона (мм):</label>
+            <input type="number" id="setupMasterWidth2" class="form-input" style="margin-bottom: 16px;">
+
+            <div class="underlined-title"><span>Настройка №3</span></div>
+            <label class="form-label">Ширина маточного рулона (мм):</label>
+            <input type="number" id="setupMasterWidth3" class="form-input" style="margin-bottom: 16px;">
+
+            <div class="underlined-title"><span>Настройка №4</span></div>
+            <label class="form-label">Ширина маточного рулона (мм):</label>
+            <input type="number" id="setupMasterWidth4" class="form-input" style="margin-bottom: 16px;">
+
+            <div style="display:flex; justify-content:center; margin-top:30px;">
+                <svg id="counterShaftSVG" width="600" height="80" viewBox="0 0 600 80">
+                    <!-- Вал -->
+                    <rect x="20" y="30" width="560" height="20" rx="0" fill="#b0b0b0" stroke="#888" stroke-width="2" />
+                    <!-- Контрнож (один, узкий) -->
+                    <rect x="100" y="25" width="6" height="30" rx="1" fill="#007BFF" stroke="#0056b3" stroke-width="1" />
+                    <!-- Метка -->
+                    <text x="300" y="70" text-anchor="middle" font-size="16" fill="#333">Контрножевой вал</text>
+                </svg>
+            </div>
+                    <!-- Контрнож (один, узкий) -->
+                    <rect x="100" y="25" width="6" height="30" rx="1" fill="#007BFF" stroke="#0056b3" stroke-width="1" />
+                    <!-- Метка -->
+                    <text x="300" y="70" text-anchor="middle" font-size="16" fill="#333">Контрножевой вал</text>
+                </svg>
+            </div>
+
+        </div>
+
+
 
         <div id="modalReset" class="modal">
             <div class="modal-content">
@@ -343,10 +411,19 @@
     </div>
 
     <script>
+                function toggleEdgeFields() {
+                    const split = document.getElementById('splitEdges').checked;
+                    document.getElementById('edgeWidth').disabled = split;
+                    document.getElementById('edgeWidthRight').disabled = split;
+                }
         function openTab(id) {
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            // Скрыть все вкладки
+            document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+            // Снять активность со всех кнопок
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
+            // Показать выбранную вкладку
+            document.getElementById(id).style.display = 'block';
+            // Сделать кнопку активной
             event.currentTarget.classList.add('active');
         }
 
@@ -360,7 +437,7 @@
         function toggleManualInputs() {
             const use2 = document.getElementById('useSecondOrder').checked;
             document.getElementById('targetWidth2').disabled = !use2;
-            document.getElementById('manualCount2Box').style.display = use2 ? 'flex' : 'none';
+            // document.getElementById('manualCount2Box').style.display = use2 ? 'flex' : 'none';
             document.getElementById('manualCount1').disabled = !document.getElementById('useManualCount1').checked;
             document.getElementById('manualCount2').disabled = !(use2 && document.getElementById('useManualCount2').checked);
         }
@@ -397,12 +474,15 @@
         function calculateShaft() {
             const master = parseFloat(document.getElementById('masterWidth').value);
             const w1 = parseFloat(document.getElementById('targetWidth1').value);
-            const edge = parseFloat(document.getElementById('edgeWidth').value) || 0;
+            let edgeLeft = parseFloat(document.getElementById('edgeWidth').value) || 0;
+            let edgeRight = parseFloat(document.getElementById('edgeWidthRight').value) || 0;
+            const split = document.getElementById('splitEdges').checked;
             const use2 = document.getElementById('useSecondOrder').checked;
             const w2 = use2 ? parseFloat(document.getElementById('targetWidth2').value) : 0;
             if (isNaN(master) || isNaN(w1)) return;
 
-            let curW = master - edge;
+
+            let curW = master - edgeLeft - edgeRight;
             let c1 = document.getElementById('useManualCount1').checked ? (parseInt(document.getElementById('manualCount1').value) || 0) : Math.floor(curW / w1);
             if (c1 * w1 > curW) c1 = Math.floor(curW / w1);
             const totalW1 = c1 * w1;
@@ -416,20 +496,35 @@
             const totalW2 = c2 * w2;
             curW -= totalW2;
 
+            // Теперь корректно делим обрезь между кромками
+            if (split) {
+                let edgeTotal = master - (totalW1 + totalW2);
+                if (edgeTotal < 0) edgeTotal = 0;
+                edgeLeft = edgeTotal / 2;
+                edgeRight = edgeTotal / 2;
+                curW = 0;
+            }
+
             document.getElementById('shaftResult').style.display = 'block';
-            document.getElementById('shaftVisual').innerHTML = `
-                <div style="display: flex; flex-direction: column; gap: 10px;">
-                    <div style="display: flex; justify-content: space-between;"><span>Заказ №1 (${w1} мм):</span> <strong>${c1} шт.</strong></div>
-                    ${use2 ? `<div style="display: flex; justify-content: space-between;"><span>Заказ №2 (${w2} мм):</span> <strong>${c2} шт.</strong></div>` : ''}
-                    <hr style="border:0; border-top:1px solid #ccc; opacity: 0.3;">
-                    <div style="display: flex; justify-content: space-between;"><span>Кромка (слева):</span> <strong>${edge} мм</strong></div>
-                    <div style="display: flex; justify-content: space-between; padding: 10px; background: rgba(0, 123, 255, 0.15); border-radius: 8px;">
-                        <span>Сумма рулонов:</span> <strong style="color: #007BFF;">${(totalW1 + totalW2).toFixed(1)} мм</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between;"><span>Спутник (справа):</span> <strong>${curW.toFixed(1)} мм</strong></div>
-                    <hr style="border:0; border-top:1px solid #ccc; opacity: 0.3;">
-                    <div style="display: flex; justify-content: space-between;"><span>Общая ширина обрези:</span> <strong style="color: #dc3545;">${(edge + curW).toFixed(1)} мм</strong></div>
-                </div>`;
+                const unaccountedClass = curW > 0 ? 'color: #fff; background: #dc3545; border-radius: 6px; padding: 2px 8px;' : '';
+                document.getElementById('shaftVisual').innerHTML = `
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div style=\"display: flex; justify-content: space-between;\"><span>Заказ №1 (${w1} мм):</span> <strong>${c1} шт.</strong></div>
+                        ${use2 ? `<div style=\"display: flex; justify-content: space-between;\"><span>Заказ №2 (${w2} мм):</span> <strong>${c2} шт.</strong></div>` : ''}
+                        <div style=\"display: flex; flex-direction: row; justify-content: space-between; align-items: center; background: rgba(0,123,255,0.10); border-radius: 10px; padding: 10px 0 10px 0; margin-bottom: 6px;\">
+                            <div style=\"flex:1; text-align:left; font-weight:bold;\">
+                                <span>Кромка/спутник (слева):</span> <strong>${edgeLeft} мм</strong>
+                            </div>
+                            <div style=\"flex:1; text-align:center; font-weight:bold;\">
+                                <span>Сумма рулонов:</span> <strong style=\"color: #007BFF;\">${(totalW1 + totalW2).toFixed(1)} мм</strong>
+                            </div>
+                            <div style=\"flex:1; text-align:right; font-weight:bold;\">
+                                <span>Кромка/спутник (справа):</span> <strong>${edgeRight} мм</strong>
+                            </div>
+                        </div>
+                        <div style=\"display: flex; justify-content: space-between; margin-bottom: 2px; ${unaccountedClass}\"><span>Неучтенная ширина:</span> <strong>${curW.toFixed(1)} мм</strong></div>
+                        <div style=\"display: flex; justify-content: space-between;\"><span>Общая ширина обрези:</span> <strong style=\"color: #dc3545;\">${(edgeLeft + edgeRight + curW).toFixed(1)} мм</strong></div>
+                    </div>`;
         }
 
         function showReset() { document.getElementById('modalReset').style.display = 'flex'; }
