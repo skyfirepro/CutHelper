@@ -8,235 +8,259 @@
     <meta name="theme-color" content="#007BFF">
     <link rel="manifest" href="manifest.json">
 
-    <style>
-        body {
-            font-family: sans-serif;
-            background-color: #f0f0f0;
-            transition: background-color 0.3s, color 0.3s;
-            color: #333;
-            margin: 0px 5px 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
+<style>
+    /* Глобальный сброс для правильного расчета размеров */
+    * {
+        box-sizing: border-box;
+    }
 
-        .container {
-            background-color: #f0f0f0;
-            border-radius: 20px;
-            box-shadow: 10px 10px 20px rgba(163, 163, 163, 0.4), -10px -10px 20px rgba(255, 255, 255, 0.8);
-            width: 450px;
-            transition: background-color 0.3s, color 0.3s;
-            margin: 10px auto;
-            padding: 20px;
-            position: relative;
-        }
+    body {
+        font-family: sans-serif;
+        background-color: #f0f0f0;
+        transition: background-color 0.3s, color 0.3s;
+        color: #333;
+        margin: 0;
+        padding: 10px;
+        /* Отступы, чтобы контейнер не прилипал к краям экрана */
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        /* На мобильных удобнее, когда контент сверху */
+        min-height: 100vh;
+    }
 
-        .tabs-nav {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            padding-right: 45px;
+    .container {
+        background-color: #f0f0f0;
+        border-radius: 20px;
+        box-shadow: 10px 10px 20px rgba(163, 163, 163, 0.4), -10px -10px 20px rgba(255, 255, 255, 0.8);
+        width: 100%;
+        max-width: 450px;
+        /* Максимальная ширина на ПК */
+        transition: background-color 0.3s, color 0.3s;
+        padding: 20px;
+        position: relative;
+        margin: 10px auto;
+        /* Центрирование */
+    }
+
+    /* Навигация адаптивная */
+    .tabs-nav {
+        display: flex;
+        flex-wrap: wrap;
+        /* Чтобы кнопки могли переноситься, если экран совсем узкий */
+        gap: 8px;
+        margin-bottom: 20px;
+        padding-right: 40px;
+        /* Место для кнопки переключения темы */
+    }
+
+    .tab-btn {
+        flex: 1;
+        min-width: 80px;
+        /* Чтобы кнопки не сжимались в кашу */
+        padding: 10px 5px;
+        border: none;
+        border-radius: 12px;
+        background-color: #f0f0f0;
+        color: #666;
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: bold;
+        box-shadow: 4px 4px 8px rgba(163, 163, 163, 0.3), -4px -4px 8px rgba(255, 255, 255, 0.7);
+        transition: all 0.2s;
+        line-height: 1.2;
+    }
+
+    .tab-btn.active {
+        box-shadow: inset 3px 3px 6px #babecc, inset -3px -3px 6px #fff;
+        color: #007BFF;
+    }
+
+    .tab-content {
+        display: none;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    #themeToggle {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background-color: #b5b3b3;
+        border: none;
+        padding: 10px;
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 4px 4px 8px rgba(163, 163, 163, 0.5), -4px -4px 8px rgba(255, 255, 255, 0.7);
+        font-size: 18px;
+        z-index: 10;
+        line-height: 1;
+    }
+
+    .underlined-title {
+        display: block;
+        margin-top: 20px;
+        margin-bottom: 15px;
+    }
+
+    .underlined-title span {
+        font-size: 1.1em;
+        font-weight: bold;
+        border-bottom: 2px solid #333;
+        padding-bottom: 2px;
+    }
+
+    .form-label {
+        display: block;
+        margin-top: 15px;
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    .form-input,
+    .form-select {
+        width: 100%;
+        padding: 12px;
+        margin-top: 8px;
+        border: none;
+        border-radius: 10px;
+        background-color: #f0f0f0;
+        color: #333;
+        box-shadow: inset 4px 4px 8px #babecc, inset -4px -4px 8px #fff;
+        font-size: 14px;
+        -webkit-appearance: none;
+        /* Убирает стандартные стили iOS */
+    }
+
+    .calculate-btn {
+        width: 100%;
+        padding: 15px;
+        margin-top: 25px;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        border-radius: 15px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        box-shadow: 4px 4px 10px rgba(0, 123, 255, 0.3);
+    }
+
+    .reset-btn {
+        width: 100%;
+        padding: 12px;
+        margin-top: 15px;
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 15px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    /* Адаптивная таблица */
+    #resultsTable {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+        font-size: 11px;
+        display: none;
+    }
+
+    #resultsTable th,
+    #resultsTable td {
+        padding: 8px 4px;
+        border: 1px solid #ddd;
+        text-align: center;
+    }
+
+    #resultsTable th {
+        background-color: #007BFF;
+        color: white;
+    }
+
+    /* Визуализация вала — делаем адаптивной */
+    #shaftVisual,
+    #counterShaftSVG {
+        width: 100%;
+        height: auto;
+        background: #f0f0f0;
+        border-radius: 15px;
+        box-shadow: inset 4px 4px 8px #babecc, inset -4px -4px 8px #fff;
+        margin-top: 15px;
+    }
+
+    /* Темная тема */
+    body.dark-mode {
+        background-color: #1e1e1e;
+        color: #e0e0e0;
+    }
+
+    body.dark-mode .container {
+        background-color: #1e1e1e;
+        box-shadow: 10px 10px 20px #000, -10px -10px 20px #3c3c3c;
+    }
+
+    body.dark-mode .form-input,
+    body.dark-mode .form-select,
+    body.dark-mode .tab-btn {
+        background-color: #1e1e1e;
+        color: #e0e0e0;
+        box-shadow: inset 4px 4px 8px #000, inset -4px -4px 8px #3c3c3c;
+    }
+
+    body.dark-mode .underlined-title span {
+        border-bottom-color: #e0e0e0;
+    }
+
+    /* Модальное окно */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 100;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .modal-content {
+        padding: 25px;
+        border-radius: 20px;
+        background: #f0f0f0;
+        text-align: center;
+        width: 100%;
+        max-width: 320px;
+    }
+
+    /* Стили для вкладки Документация */
+    .docs-flex-row {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+
+    .docs-flex-col {
+        flex: 1;
+    }
+
+    @media (max-width: 400px) {
+        .docs-flex-row {
+            flex-direction: column;
+            gap: 0;
         }
 
         .tab-btn {
-            flex: 1;
-            padding: 12px 5px;
-            border: none;
-            border-radius: 12px;
-            background-color: #f0f0f0;
-            color: #666;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: bold;
-            box-shadow: 4px 4px 8px rgba(163, 163, 163, 0.3), -4px -4px 8px rgba(255, 255, 255, 0.7);
-            transition: all 0.2s;
-            line-height: 1.2;
+            font-size: 10px;
         }
-
-        .tab-btn.active {
-            box-shadow: inset 3px 3px 6px #babecc, inset -3px -3px 6px #fff;
-            color: #007BFF;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        #themeToggle {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background-color: #b5b3b3;
-            border: none;
-            padding: 10px 12px;
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 6px 6px 12px rgba(163, 163, 163, 0.5), -6px -6px 12px rgba(255, 255, 255, 0.7);
-            font-size: 18px;
-            z-index: 10;
-        }
-
-        /* Исправленные заголовки с коротким подчеркиванием */
-        .underlined-title {
-            display: block;
-            margin-top: 20px;
-            margin-bottom: 15px;
-        }
-
-        .underlined-title span {
-            font-size: 1.1em;
-            font-weight: bold;
-            border-bottom: 2px solid #333;
-            padding-bottom: 2px;
-        }
-
-        .checkbox-container {
-            display: flex;
-            align-items: center;
-            margin-top: 15px;
-            gap: 10px;
-        }
-
-        .form-label {
-            display: block;
-            margin-top: 15px;
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        .form-input,
-        .form-select {
-            width: 100%;
-            padding: 12px;
-            margin-top: 8px;
-            box-sizing: border-box;
-            border: none;
-            border-radius: 10px;
-            background-color: #f0f0f0;
-            color: #333;
-            box-shadow: inset 5px 5px 10px #babecc, inset -5px -5px 10px #fff;
-            font-size: 14px;
-        }
-
-        .form-input:disabled {
-            background-color: #e0e0e0;
-            color: #999;
-            cursor: default;
-            opacity: 0.6;
-        }
-
-        .calculate-btn {
-            width: 100%;
-            padding: 15px;
-            margin-top: 25px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 15px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            box-shadow: 5px 5px 10px rgba(163, 163, 163, 0.4), -5px -5px 10px rgba(255, 255, 255, 0.8);
-        }
-
-        .reset-btn {
-            width: 100%;
-            padding: 15px;
-            margin-top: 15px;
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 15px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        #resultsTable {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-            font-size: 0.75em;
-            display: none;
-            table-layout: fixed;
-        }
-
-        #resultsTable th {
-            background-color: #007BFF;
-            color: white;
-            padding: 8px 2px;
-            border: 1px solid #fff;
-        }
-
-        #resultsTable td {
-            padding: 8px 2px;
-            border: 1px solid #ddd;
-            text-align: center;
-        }
-
-        #shaftVisual {
-            background: #f0f0f0;
-            border-radius: 15px;
-            padding: 15px;
-            box-shadow: inset 4px 4px 8px #babecc, inset -4px -4px 8px #fff;
-            margin-top: 15px;
-        }
-
-        body.dark-mode {
-            background-color: #1e1e1e;
-            color: #e0e0e0;
-        }
-
-        body.dark-mode .container {
-            background-color: #1e1e1e;
-            box-shadow: 10px 10px 20px #000, -10px -10px 20px #3c3c3c;
-        }
-
-        body.dark-mode .underlined-title span {
-            border-bottom-color: #e0e0e0;
-        }
-
-        body.dark-mode .form-input,
-        body.dark-mode .form-select {
-            background-color: #1e1e1e;
-            color: #e0e0e0;
-            box-shadow: inset 5px 5px 10px #000, inset -5px -5px 10px #3c3c3c;
-        }
-
-        body.dark-mode #shaftVisual {
-            background: #1e1e1e;
-            box-shadow: inset 4px 4px 8px #000, inset -4px -4px 8px #3c3c3c;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 100;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            padding: 25px;
-            border-radius: 20px;
-            background: #f0f0f0;
-            text-align: center;
-            width: 80%;
-        }
-
-        body.dark-mode .modal-content {
-            background: #1e1e1e;
-        }
-    </style>
+    }
+</style>
 </head>
 
 <body>
@@ -300,13 +324,13 @@
 
         <div id="shaftTab" class="tab-content">
             <h2 style="text-align: center; color: #007BFF; font-size: 18px;">Расчет раскроя</h2>
-            
+
             <div class="underlined-title"><span>Маточный рулон</span></div>
-            
+
             <label class="form-label">Ширина (мм):</label>
             <input type="number" id="masterWidth" class="form-input">
 
-            <div class="underlined-title"><span>Заказ №1</span></div>   
+            <div class="underlined-title"><span>Заказ №1</span></div>
 
             <label class="form-label">Ширина заказа №1 (мм):</label>
             <input type="number" id="targetWidth1" class="form-input">
@@ -328,7 +352,7 @@
             <div class="checkbox-container">
                 <label for="useSecondOrder">Количество рулонов</label>
             </div>
-            
+
             <div class="checkbox-container" id="manualCount2Box">
                 <input type="checkbox" id="useManualCount2" onchange="toggleManualInputs()">
                 <label for="useManualCount2">Количество рулонов</label>
@@ -366,10 +390,10 @@
             <div class="underlined-title"><span>Настройка №1</span></div>
             <label class="form-label">Ширина маточного рулона (мм):</label>
             <input type="number" id="setupMasterWidth1" class="form-input" style="margin-bottom: 16px;">
-                <label class="form-label">Ширина заказа (мм):</label>
-                <input type="number" id="setupOrderWidth1" class="form-input" style="margin-bottom: 12px;">
-                <label class="form-label">Количество рулонов:</label>
-                <input type="number" id="setupOrderCount1" class="form-input" style="margin-bottom: 16px;">
+            <label class="form-label">Ширина заказа (мм):</label>
+            <input type="number" id="setupOrderWidth1" class="form-input" style="margin-bottom: 12px;">
+            <label class="form-label">Количество рулонов:</label>
+            <input type="number" id="setupOrderCount1" class="form-input" style="margin-bottom: 16px;">
 
             <div class="underlined-title"><span>Настройка №2</span></div>
             <label class="form-label">Ширина маточного рулона (мм):</label>
@@ -388,17 +412,18 @@
                     <!-- Вал -->
                     <rect x="20" y="30" width="560" height="20" rx="0" fill="#b0b0b0" stroke="#888" stroke-width="2" />
                     <!-- Контрнож (один, узкий) -->
-                    <rect x="100" y="25" width="6" height="30" rx="1" fill="#007BFF" stroke="#0056b3" stroke-width="1" />
+                    <rect x="100" y="25" width="6" height="30" rx="1" fill="#007BFF" stroke="#0056b3"
+                        stroke-width="1" />
                     <!-- Метка -->
                     <text x="300" y="70" text-anchor="middle" font-size="16" fill="#333">Контрножевой вал</text>
                 </svg>
             </div>
-                    <!-- Контрнож (один, узкий) -->
-                    <rect x="100" y="25" width="6" height="30" rx="1" fill="#007BFF" stroke="#0056b3" stroke-width="1" />
-                    <!-- Метка -->
-                    <text x="300" y="70" text-anchor="middle" font-size="16" fill="#333">Контрножевой вал</text>
-                </svg>
-            </div>
+            <!-- Контрнож (один, узкий) -->
+            <rect x="100" y="25" width="6" height="30" rx="1" fill="#007BFF" stroke="#0056b3" stroke-width="1" />
+            <!-- Метка -->
+            <text x="300" y="70" text-anchor="middle" font-size="16" fill="#333">Контрножевой вал</text>
+            </svg>
+        </div>
 
         <div id="docsTab" class="tab-content">
             <h2 style="text-align: center; color: #007BFF; font-size: 18px;">Документация</h2>
@@ -447,7 +472,8 @@
             </div>
 
             <div class="underlined-title"><span>Брак / лишние рулоны (Вычитается из ГП)</span></div>
-            <input type="number" class="form-input" id="defectRolls" placeholder="Введите количество" style="margin-bottom: 18px;">
+            <input type="number" class="form-input" id="defectRolls" placeholder="Введите количество"
+                style="margin-bottom: 18px;">
             <button class="calculate-btn" id="docsCalcBtn" style="width: 100%; margin-top: 10px;">Рассчитать</button>
 
             <div id="docsTablesBlock" style="margin-top: 28px; display: none;">
@@ -485,49 +511,53 @@
                 </table>
             </div>
         </div>
-    <style>
-        /* Адаптив для вкладки Документация */
-        .docs-flex-row {
-            display: flex;
-            gap: 16px;
-            align-items: flex-start;
-            margin-bottom: 18px;
-            width: 100%;
-        }
-        .docs-flex-col {
-            flex: 1;
-            min-width: 0;
-        }
-        .docs-radio-row {
-            display: flex;
-            gap: 18px;
-            margin: 8px 0 24px 0;
-        }
-        @media (max-width: 600px) {
+        <style>
+            /* Адаптив для вкладки Документация */
             .docs-flex-row {
-                flex-direction: column;
-                gap: 8px;
+                display: flex;
+                gap: 16px;
+                align-items: flex-start;
+                margin-bottom: 18px;
+                width: 100%;
             }
+
+            .docs-flex-col {
+                flex: 1;
+                min-width: 0;
+            }
+
             .docs-radio-row {
-                flex-direction: column;
-                gap: 8px;
+                display: flex;
+                gap: 18px;
+                margin: 8px 0 24px 0;
             }
-        }
-    </style>
 
+            @media (max-width: 600px) {
+                .docs-flex-row {
+                    flex-direction: column;
+                    gap: 8px;
+                }
+
+                .docs-radio-row {
+                    flex-direction: column;
+                    gap: 8px;
+                }
+            }
+        </style>
+
+    </div>
+
+
+
+
+
+    <div id="modalReset" class="modal">
+        <div class="modal-content">
+            <p>Очистить все поля ввода?</p>
+            <button class="calculate-btn" onclick="location.reload()">Да</button>
+            <button class="reset-btn" onclick="closeReset()">Нет</button>
         </div>
-
-        
-
-
-
-        <div id="modalReset" class="modal">
-            <div class="modal-content">
-                <p>Очистить все поля ввода?</p>
-                <button class="calculate-btn" onclick="location.reload()">Да</button>
-                <button class="reset-btn" onclick="closeReset()">Нет</button>
-            </div>
-        </div>
+    </div>
     </div>
 
     <script>
@@ -606,7 +636,7 @@
             document.getElementById('passportObrez').textContent = obrez;
         }
         // Вешаем обработчики
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Кнопка Рассчитать
             const calcBtn = document.getElementById('docsCalcBtn');
             if (calcBtn) calcBtn.addEventListener('click', updateDocsTables);
@@ -615,11 +645,11 @@
                 radio.addEventListener('change', updateDocsTables);
             });
         });
-                function toggleEdgeFields() {
-                    const split = document.getElementById('splitEdges').checked;
-                    document.getElementById('edgeWidth').disabled = split;
-                    document.getElementById('edgeWidthRight').disabled = split;
-                }
+        function toggleEdgeFields() {
+            const split = document.getElementById('splitEdges').checked;
+            document.getElementById('edgeWidth').disabled = split;
+            document.getElementById('edgeWidthRight').disabled = split;
+        }
         function openTab(id) {
             // Скрыть все вкладки (убрать класс active)
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -710,8 +740,8 @@
             }
 
             document.getElementById('shaftResult').style.display = 'block';
-                const unaccountedClass = curW > 0 ? 'color: #fff; background: #dc3545; border-radius: 6px; padding: 2px 8px;' : '';
-                document.getElementById('shaftVisual').innerHTML = `
+            const unaccountedClass = curW > 0 ? 'color: #fff; background: #dc3545; border-radius: 6px; padding: 2px 8px;' : '';
+            document.getElementById('shaftVisual').innerHTML = `
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         <div style=\"display: flex; justify-content: space-between;\"><span>Заказ №1 (${w1} мм):</span> <strong>${c1} шт.</strong></div>
                         ${use2 ? `<div style=\"display: flex; justify-content: space-between;\"><span>Заказ №2 (${w2} мм):</span> <strong>${c2} шт.</strong></div>` : ''}
@@ -736,18 +766,19 @@
     </script>
 </body>
 
-    <script>
+<script>
     // Регистрация service worker для PWA
     if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function() {
-            navigator.serviceWorker.register('sw.js').then(function(registration) {
+        window.addEventListener('load', function () {
+            navigator.serviceWorker.register('sw.js').then(function (registration) {
                 // Успешно
                 console.log('ServiceWorker зарегистрирован:', registration.scope);
-            }, function(err) {
+            }, function (err) {
                 // Ошибка
                 console.log('ServiceWorker ошибка:', err);
             });
         });
     }
-    </script>
+</script>
+
 </html>
