@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Расчеты производства</title>
+    <meta name="theme-color" content="#007BFF">
+    <link rel="manifest" href="manifest.json">
 
     <style>
         body {
@@ -67,8 +69,8 @@
 
         #themeToggle {
             position: absolute;
-            top: 20px;
-            right: 20px;
+            top: 5px;
+            right: 5px;
             background-color: #b5b3b3;
             border: none;
             padding: 10px 12px;
@@ -243,7 +245,8 @@
         <div class="tabs-nav">
             <button class="tab-btn active" onclick="openTab('rollsTab')">Количество <br> рулонов</button>
             <button class="tab-btn" onclick="openTab('shaftTab')">Раскрой</button>
-                <button class="tab-btn" onclick="openTab('setupTab')">Перенастройка</button>
+            <button class="tab-btn" onclick="openTab('setupTab')">Перенастройка</button>
+            <button class="tab-btn" onclick="openTab('docsTab')">Документация</button>
         </div>
 
         <div id="rollsTab" class="tab-content active">
@@ -285,7 +288,7 @@
             <table id="resultsTable">
                 <thead>
                     <tr>
-                        <th>Количество рулонов (шт)</th>
+                        <th>Количество ходок (шт)</th>
                         <th>Точное количество (шт)</th>
                         <th>Остаток на шпуле перед резкой (мм)</th>
                         <th>Остаток на шпуле после резки (мм)</th>
@@ -397,7 +400,124 @@
                 </svg>
             </div>
 
+        <div id="docsTab" class="tab-content">
+            <h2 style="text-align: center; color: #007BFF; font-size: 18px;">Документация</h2>
+            <div class="underlined-title"><span>Маточный рулон</span></div>
+            <div class="docs-flex-row">
+                <div class="docs-flex-col">
+                    <label class="form-label">Ширина</label>
+                    <input type="number" class="form-input" id="mainWidth" placeholder="Введите ширину">
+                </div>
+                <div class="docs-flex-col">
+                    <label class="form-label">Вес на входе</label>
+                    <input type="number" class="form-input" placeholder="Введите вес">
+                </div>
+            </div>
+            <div class="form-label" style="margin-top: 18px;">Остался металл для других заказов</div>
+            <div class="docs-radio-row">
+                <label>
+                    <input type="radio" name="metalLeft" value="yes" checked> Да
+                </label>
+                <label>
+                    <input type="radio" name="metalLeft" value="no"> Нет
+                </label>
+            </div>
+
+            <div class="underlined-title"><span>Готовая продукция</span></div>
+            <div class="docs-flex-row">
+                <div class="docs-flex-col">
+                    <label class="form-label">Количество рулонов ГП за ходку</label>
+                    <input type="number" class="form-input" id="gpPerTrip" placeholder="Введите количество">
+                </div>
+                <div class="docs-flex-col">
+                    <label class="form-label">Количество ходок</label>
+                    <input type="number" class="form-input" id="tripsCount" placeholder="Введите количество">
+                </div>
+            </div>
+
+            <div class="docs-flex-row">
+                <div class="docs-flex-col">
+                    <label class="form-label">Вес рулона</label>
+                    <input type="number" class="form-input" id="rollWeight" placeholder="Введите вес">
+                </div>
+                <div class="docs-flex-col">
+                    <label class="form-label">Ширина рулона</label>
+                    <input type="number" class="form-input" id="rollWidth" placeholder="Введите ширину">
+                </div>
+            </div>
+
+            <div class="underlined-title"><span>Брак / лишние рулоны (Вычитается из ГП)</span></div>
+            <input type="number" class="form-input" id="defectRolls" placeholder="Введите количество" style="margin-bottom: 18px;">
+            <button class="calculate-btn" id="docsCalcBtn" style="width: 100%; margin-top: 10px;">Рассчитать</button>
+
+            <div id="docsTablesBlock" style="margin-top: 28px; display: none;">
+                <div class="underlined-title"><span>Сменное задание</span></div>
+                <table style="width:100%; border-collapse:collapse; margin-bottom: 24px; font-size: 14px;">
+                    <tr style="background:#007BFF; color:#fff;">
+                        <th style="padding:6px; border:1px solid #fff;">Количество рулонов</th>
+                        <th style="padding:6px; border:1px solid #fff;">Масса</th>
+                        <th style="padding:6px; border:1px solid #fff;">ОР</th>
+                        <th style="padding:6px; border:1px solid #fff;">ПРО</th>
+                        <th style="padding:6px; border:1px solid #fff;">Остаток</th>
+                    </tr>
+                    <tr>
+                        <td id="shiftTaskRolls" style="border:1px solid #ddd; height:32px;"></td>
+                        <td id="shiftTaskMass" style="border:1px solid #ddd;"></td>
+                        <td id="shiftTaskOR" style="border:1px solid #ddd;"></td>
+                        <td id="shiftTaskPRO" style="border:1px solid #ddd;"></td>
+                        <td id="shiftTaskOstatok" style="border:1px solid #ddd;"></td>
+                    </tr>
+                </table>
+                <div class="underlined-title"><span>Паспорт рулона</span></div>
+                <table style="width:100%; border-collapse:collapse; font-size: 14px;">
+                    <tr style="background:#007BFF; color:#fff;">
+                        <th style="padding:6px; border:1px solid #fff;">Количество рулонов</th>
+                        <th style="padding:6px; border:1px solid #fff;">Масса</th>
+                        <th style="padding:6px; border:1px solid #fff;">Обрезь</th>
+                        <th style="padding:6px; border:1px solid #fff;">Остаток</th>
+                    </tr>
+                    <tr>
+                        <td id="passportRolls" style="border:1px solid #ddd; height:32px;"></td>
+                        <td id="passportMass" style="border:1px solid #ddd;"></td>
+                        <td id="passportObrez" style="border:1px solid #ddd;"></td>
+                        <td id="passportOstatok" style="border:1px solid #ddd;"></td>
+                    </tr>
+                </table>
+            </div>
         </div>
+    <style>
+        /* Адаптив для вкладки Документация */
+        .docs-flex-row {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            margin-bottom: 18px;
+            width: 100%;
+        }
+        .docs-flex-col {
+            flex: 1;
+            min-width: 0;
+        }
+        .docs-radio-row {
+            display: flex;
+            gap: 18px;
+            margin: 8px 0 24px 0;
+        }
+        @media (max-width: 600px) {
+            .docs-flex-row {
+                flex-direction: column;
+                gap: 8px;
+            }
+            .docs-radio-row {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+    </style>
+
+        </div>
+
+        
 
 
 
@@ -411,18 +531,102 @@
     </div>
 
     <script>
+        // --- Документация: расчёт таблиц ---
+        function updateDocsTables() {
+            // Показываем блок с таблицами при расчете
+            document.getElementById('docsTablesBlock').style.display = 'block';
+            const rollsPerTrip = parseFloat(document.getElementById('gpPerTrip').value) || 0;
+            const trips = parseFloat(document.getElementById('tripsCount').value) || 0;
+            const rollWeight = parseFloat(document.getElementById('rollWeight').value) || 0;
+            const rollWidth = parseFloat(document.getElementById('rollWidth').value) || 0;
+            const mainWidth = parseFloat(document.getElementById('mainWidth').value) || 0;
+            const inputMasterWeight = parseFloat(document.querySelector('input[placeholder="Введите вес"]').value) || 0;
+            const defectRolls = parseFloat(document.getElementById('defectRolls').value) || 0;
+            // Радиокнопки
+            const metalLeftYes = document.querySelector('input[name="metalLeft"][value="yes"]:checked');
+            const metalLeftNo = document.querySelector('input[name="metalLeft"][value="no"]:checked');
+
+            const totalRolls = rollsPerTrip * trips;
+            const totalMass = rollWeight * rollsPerTrip * trips;
+            const defectMass = defectRolls * rollWeight;
+            // Масса с учетом брака
+            const totalMassCorrected = totalMass - defectMass;
+            document.getElementById('shiftTaskRolls').textContent = totalRolls ? totalRolls : '';
+            document.getElementById('passportRolls').textContent = totalRolls ? totalRolls : '';
+            document.getElementById('shiftTaskMass').textContent = totalMassCorrected ? totalMassCorrected : '';
+            document.getElementById('passportMass').textContent = totalMassCorrected ? totalMassCorrected : '';
+
+            // ОР
+            const allRollsWidth = rollWidth * rollsPerTrip;
+            let OR = '';
+            if (allRollsWidth > 0) {
+                OR = (totalMass / allRollsWidth) * (mainWidth - allRollsWidth);
+                OR = OR + defectMass; // Добавляем массу брака к ОР
+            }
+            document.getElementById('shiftTaskOR').textContent = (OR && !isNaN(OR)) ? OR.toFixed(2) : '';
+
+            // Остаток/ПРО
+            let ostatok = '';
+            let PRO = '';
+            if (inputMasterWeight > 0 && totalMass > 0) {
+                const temp = inputMasterWeight - totalMassCorrected - (parseFloat(OR) || 0);
+                if (metalLeftYes) {
+                    ostatok = !isNaN(temp) ? temp.toFixed(2) : '';
+                    PRO = '-';
+                } else if (metalLeftNo) {
+                    PRO = !isNaN(temp) ? temp.toFixed(2) : '';
+                    ostatok = '-';
+                } else {
+                    ostatok = '';
+                    PRO = '';
+                }
+            } else {
+                ostatok = '';
+                PRO = '';
+            }
+            document.getElementById('shiftTaskOstatok').textContent = ostatok;
+            document.getElementById('shiftTaskPRO').textContent = PRO;
+
+            // Паспорт рулона: Обрезь и Остаток
+            let obrez = '';
+            let passportOstatok = '';
+            if (metalLeftYes) {
+                passportOstatok = ostatok;
+                obrez = (parseFloat(OR) || 0) + (PRO !== '-' ? parseFloat(PRO) || 0 : 0);
+                obrez = obrez ? obrez.toFixed(2) : '';
+            } else if (metalLeftNo) {
+                passportOstatok = '-';
+                obrez = (parseFloat(OR) || 0) + (PRO !== '-' ? parseFloat(PRO) || 0 : 0);
+                obrez = obrez ? obrez.toFixed(2) : '';
+            } else {
+                passportOstatok = '';
+                obrez = '';
+            }
+            document.getElementById('passportOstatok').textContent = passportOstatok;
+            document.getElementById('passportObrez').textContent = obrez;
+        }
+        // Вешаем обработчики
+        document.addEventListener('DOMContentLoaded', function() {
+            // Кнопка Рассчитать
+            const calcBtn = document.getElementById('docsCalcBtn');
+            if (calcBtn) calcBtn.addEventListener('click', updateDocsTables);
+            // Радиокнопки
+            document.querySelectorAll('input[name="metalLeft"]').forEach(radio => {
+                radio.addEventListener('change', updateDocsTables);
+            });
+        });
                 function toggleEdgeFields() {
                     const split = document.getElementById('splitEdges').checked;
                     document.getElementById('edgeWidth').disabled = split;
                     document.getElementById('edgeWidthRight').disabled = split;
                 }
         function openTab(id) {
-            // Скрыть все вкладки
-            document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+            // Скрыть все вкладки (убрать класс active)
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             // Снять активность со всех кнопок
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            // Показать выбранную вкладку
-            document.getElementById(id).style.display = 'block';
+            // Показать выбранную вкладку (добавить класс active)
+            document.getElementById(id).classList.add('active');
             // Сделать кнопку активной
             event.currentTarget.classList.add('active');
         }
@@ -532,4 +736,18 @@
     </script>
 </body>
 
+    <script>
+    // Регистрация service worker для PWA
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('sw.js').then(function(registration) {
+                // Успешно
+                console.log('ServiceWorker зарегистрирован:', registration.scope);
+            }, function(err) {
+                // Ошибка
+                console.log('ServiceWorker ошибка:', err);
+            });
+        });
+    }
+    </script>
 </html>
