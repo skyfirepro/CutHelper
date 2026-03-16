@@ -29,6 +29,11 @@
         min-height: 100vh;
     }
 
+    input:disabled {
+        background-color: rgba(204, 203, 203, 0.773); /* Темный цвет фона */
+        cursor: not-allowed;       /* Меняем курсор на "запрещающий" */
+    }
+
     .container {
         background-color: #f0f0f0;
         border-radius: 20px;
@@ -86,8 +91,8 @@
 
     #themeToggle {
         position: absolute;
-        top: 15px;
-        right: 15px;
+        top: 5px;
+        right: 5px;
         background-color: #b5b3b3;
         border: none;
         padding: 10px;
@@ -146,6 +151,14 @@
         font-size: 16px;
         font-weight: bold;
         box-shadow: 4px 4px 10px rgba(0, 123, 255, 0.3);
+    }
+
+    .rupture-container {
+        margin-top: 20px;
+    }
+
+    .distanceToRupture-label {
+        margin-top: 10px;
     }
 
     .reset-btn {
@@ -267,26 +280,26 @@
     <div class="container">
         <button id="themeToggle" onclick="toggleTheme()">🌙</button>
         <div class="tabs-nav">
-            <button class="tab-btn active" onclick="openTab('rollsTab')">Количество <br> рулонов</button>
+            <button class="tab-btn active" onclick="openTab('rollsTab')">Количество <br> ходок</button>
             <button class="tab-btn" onclick="openTab('shaftTab')">Раскрой</button>
-            <button class="tab-btn" onclick="openTab('setupTab')">Перенастройка</button>
+            <!-- <button class="tab-btn" onclick="openTab('setupTab')">Перенастройка</button> -->
             <button class="tab-btn" onclick="openTab('docsTab')">Документация</button>
         </div>
 
         <div id="rollsTab" class="tab-content active">
-            <h2 style="text-align: center; color: #007BFF; font-size: 18px;">Расчет рулонов и остатка</h2>
+            <h2 style="text-align: center; color: #007BFF; font-size: 18px;">Количество ходок и остатка</h2>
 
             <div class="underlined-title"><span>Маточный рулон</span></div>
 
             <label class="form-label">Расстояние от шпули до края фольги (мм):</label>
             <input type="number" id="distanceToEdge" class="form-input">
 
-            <div class="checkbox-container">
+            <div class="checkbox-container rupture-container">
                 <input type="checkbox" id="useRupture" onchange="toggleRuptureField()">
                 <label for="useRupture">Рассчитать до порыва</label>
             </div>
 
-            <label class="form-label">Расстояние от шпули до порыва (мм):</label>
+            <label class="form-label distanceToRupture-label">Расстояние от шпули до порыва (мм):</label>
             <input type="number" id="distanceToRupture" disabled class="form-input">
 
             <label class="form-label">Диаметр шпули маточного рулона (мм):</label>
@@ -303,7 +316,7 @@
                 <option value="158.4">158.4 (152.4 + 3)</option>
             </select>
 
-            <label class="form-label">Коэффициент плотности</label>
+            <div class="underlined-title"><span>Коэффициент плотности</span></div>
             <input type="number" id="densityCorrection" value="0.98" step="0.01" class="form-input">
 
             <button class="calculate-btn" onclick="calculateRolls()">Рассчитать</button>
@@ -362,7 +375,7 @@
             <div class="underlined-title"><span>Обрезь</span></div>
 
             <label class="form-label">Кромка/спутник (слева, мм):</label>
-            <div class="checkbox-container" style="margin-bottom: 8px;">
+            <div class="checkbox-container" style="margin-top: 10px; margin-bottom: 5px;">
                 <input type="checkbox" id="splitEdges" onchange="toggleEdgeFields()">
                 <label for="splitEdges">Разделить поровну</label>
             </div>
@@ -471,7 +484,7 @@
                 </div>
             </div>
 
-            <div class="underlined-title"><span>Брак / лишние рулоны (Вычитается из ГП)</span></div>
+            <label class="form-label">Брак / лишние рулоны (Вычитается из ГП)</label>
             <input type="number" class="form-input" id="defectRolls" placeholder="Введите количество"
                 style="margin-bottom: 18px;">
             <button class="calculate-btn" id="docsCalcBtn" style="width: 100%; margin-top: 10px;">Рассчитать</button>
@@ -481,7 +494,7 @@
                 <table style="width:100%; border-collapse:collapse; margin-bottom: 24px; font-size: 14px;">
                     <tr style="background:#007BFF; color:#fff;">
                         <th style="padding:6px; border:1px solid #fff;">Количество рулонов</th>
-                        <th style="padding:6px; border:1px solid #fff;">Масса</th>
+                        <th style="padding:6px; border:1px solid #fff;">Масса ГП</th>
                         <th style="padding:6px; border:1px solid #fff;">ОР</th>
                         <th style="padding:6px; border:1px solid #fff;">ПРО</th>
                         <th style="padding:6px; border:1px solid #fff;">Остаток</th>
@@ -498,7 +511,7 @@
                 <table style="width:100%; border-collapse:collapse; font-size: 14px;">
                     <tr style="background:#007BFF; color:#fff;">
                         <th style="padding:6px; border:1px solid #fff;">Количество рулонов</th>
-                        <th style="padding:6px; border:1px solid #fff;">Масса</th>
+                        <th style="padding:6px; border:1px solid #fff;">Масса ГП</th>
                         <th style="padding:6px; border:1px solid #fff;">Обрезь</th>
                         <th style="padding:6px; border:1px solid #fff;">Остаток</th>
                     </tr>
@@ -577,12 +590,13 @@
             const metalLeftNo = document.querySelector('input[name="metalLeft"][value="no"]:checked');
 
             const totalRolls = rollsPerTrip * trips;
+            const totalCorrectedRolls = totalRolls - defectRolls;
             const totalMass = rollWeight * rollsPerTrip * trips;
             const defectMass = defectRolls * rollWeight;
             // Масса с учетом брака
             const totalMassCorrected = totalMass - defectMass;
-            document.getElementById('shiftTaskRolls').textContent = totalRolls ? totalRolls : '';
-            document.getElementById('passportRolls').textContent = totalRolls ? totalRolls : '';
+            document.getElementById('shiftTaskRolls').textContent = totalCorrectedRolls ? totalCorrectedRolls : '';
+            document.getElementById('passportRolls').textContent = totalCorrectedRolls ? totalCorrectedRolls : '';
             document.getElementById('shiftTaskMass').textContent = totalMassCorrected ? totalMassCorrected : '';
             document.getElementById('passportMass').textContent = totalMassCorrected ? totalMassCorrected : '';
 
