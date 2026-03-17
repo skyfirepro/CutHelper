@@ -282,8 +282,10 @@
         <div class="tabs-nav">
             <button class="tab-btn active" onclick="openTab('rollsTab')">Количество <br> ходок</button>
             <button class="tab-btn" onclick="openTab('shaftTab')">Раскрой</button>
+            <button class="tab-btn" onclick="openTab('shaftMiniTab')">Раскрой (мини)</button>
             <!-- <button class="tab-btn" onclick="openTab('setupTab')">Перенастройка</button> -->
             <button class="tab-btn" onclick="openTab('docsTab')">Документация</button>
+            <!-- <button class="tab-btn" onclick="openTab('obrezTab')">Обрезь</button> -->
         </div>
 
         <div id="rollsTab" class="tab-content active">
@@ -391,6 +393,98 @@
                 <div id="shaftVisual"></div>
             </div>
         </div>
+
+        
+
+        <div id="shaftMiniTab" class="tab-content">
+            <h2 style="text-align: center; color: #007BFF; font-size: 18px;">Расчет раскроя лапши</h2>
+        
+            <div class="docs-flex-row">
+                <div class="docs-flex-col">
+                    <label class="form-label">Ширина маточного рулона (мм)</label>
+                    <input type="number" id="masterWidthMini" class="form-input" placeholder="Введите ширину">
+                </div>
+        
+                <div class="docs-flex-col">
+                    <label class="form-label">Ширина намоточного рулона (мм)</label>
+                    <input type="number" id="slitWidth" class="form-input" placeholder="Введите ширину">
+                </div>
+            </div>
+        
+            <div style="text-align: center; margin: 20px 0;">
+                <button id="calcBtn" class="calculate-btn" style="margin-top: 5px;">Рассчитать </button>
+            </div>
+        
+            <table
+                style="width: 100%; border-collapse: collapse; text-align: center; table-layout: fixed; border: 1px solid #dee2e6;">
+                <thead>
+                    <tr style="background-color: #f8f9fa;">
+                        <th style="border: 1px solid #dee2e6; padding: 10px; font-size: 13px;">Количество намоточных рулонов
+                        </th>
+                        <th style="border: 1px solid #dee2e6; padding: 10px; font-size: 13px;">Общая ширина ГП (мм)</th>
+                        <th style="border: 1px solid #dee2e6; padding: 10px; font-size: 13px;">Обрезь (мм)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="background-color: #fff;">
+                        <td id="resCount1"
+                            style="border: 1px solid #dee2e6; padding: 15px; font-weight: bold; font-size: 18px;">
+                            0</td>
+                        <td id="resTotal1"
+                            style="border: 1px solid #dee2e6; padding: 15px; font-weight: bold; font-size: 18px;">0</td>
+                        <td id="resScrap1"
+                            style="border: 1px solid #dee2e6; padding: 15px; font-weight: bold; font-size: 18px; color: #dc3545">0</td>
+                    </tr>
+                    <tr style="background-color: #fff;">
+                        <td id="resCount2"
+                            style="border: 1px solid #dee2e6; padding: 15px; font-weight: bold; font-size: 18px;">
+                            0</td>
+                        <td id="resTotal2"
+                            style="border: 1px solid #dee2e6; padding: 15px; font-weight: bold; font-size: 18px;">0</td>
+                        <td id="resScrap2"
+                            style="border: 1px solid #dee2e6; padding: 15px; font-weight: bold; font-size: 18px; color: #dc3545">
+                            0</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p style="font-size: 11px; color: #666; margin-top: 5px;">*Вторая строка: расчет при уменьшении количества рулонов
+                на 1 шт.</p>
+        </div>
+
+        <script>
+            document.getElementById('calcBtn').addEventListener('click', function () {
+                const master = parseFloat(document.getElementById('masterWidthMini').value);
+                const slit = parseFloat(document.getElementById('slitWidth').value);
+
+                if (!master || !slit || master <= 0 || slit <= 0) {
+                    alert("Введите корректные данные");
+                    return;
+                }
+
+                // --- ЛОГИКА ПЕРВОЙ СТРОКИ (N) ---
+                const count1 = Math.floor(master / slit);
+                const total1 = count1 * slit;
+                const scrap1 = master - total1;
+
+                // Заполнение 1-й строки
+                document.getElementById('resCount1').textContent = count1;
+                document.getElementById('resTotal1').textContent = total1;
+                document.getElementById('resScrap1').textContent = scrap1.toFixed(1);
+
+                // --- ЛОГИКА ВТОРОЙ СТРОКИ (N - 1) ---
+                // Берем результат деления, отбрасываем дробь и вычитаем 1
+                const count2 = count1 > 0 ? count1 - 1 : 0;
+                const total2 = count2 * slit;
+                const scrap2 = master - total2;
+
+                // Заполнение 2-й строки
+                document.getElementById('resCount2').textContent = count2;
+                document.getElementById('resTotal2').textContent = total2;
+                document.getElementById('resScrap2').textContent = scrap2.toFixed(1);
+            });
+        </script>
+        
+
 
         <div id="setupTab" class="tab-content">
             <h2 style="text-align: center; color: #007BFF; font-size: 18px;">Перенастройка</h2>
@@ -557,6 +651,11 @@
                 }
             }
         </style>
+
+        <!-- <div id="obrezTab" class="tab-content">
+            <h2 style="text-align: center; color: #007BFF; font-size: 18px;">Обрезь</h2>
+        </div> -->
+
 
     </div>
 
