@@ -1,7 +1,7 @@
 {
-    "name": "Roll Count Calculator",
-    "short_name": "RollCalc",
-    "description": "Инструмент для расчета количества рулонов и остатка.",
+    "name": "Orio Helper",
+    "short_name": "OriO Helper",
+    "description": "Инструменты для расчетов",
     "start_url": "./",
     "display": "standalone",
     "background_color": "#f0f0f0",
