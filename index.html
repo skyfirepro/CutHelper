@@ -285,7 +285,7 @@
             <button class="tab-btn" onclick="openTab('shaftMiniTab')">Раскрой (мини)</button>
             <!-- <button class="tab-btn" onclick="openTab('setupTab')">Перенастройка</button> -->
             <button class="tab-btn" onclick="openTab('docsTab')">Документация</button>
-            <!-- <button class="tab-btn" onclick="openTab('obrezTab')">Обрезь</button> -->
+            <button class="tab-btn" onclick="openTab('obrezTab')">Обрезь<br>&nbsp;</button>
         </div>
 
         <div id="rollsTab" class="tab-content active">
@@ -652,9 +652,28 @@
             }
         </style>
 
-        <!-- <div id="obrezTab" class="tab-content">
+        <div id="obrezTab" class="tab-content">
             <h2 style="text-align: center; color: #007BFF; font-size: 18px;">Обрезь</h2>
-        </div> -->
+
+            <label class="form-label">Общий вес ГП:</label>
+            <input type="number" id="totalGpWeight" class="form-input">
+
+            <label class="form-label">Ширина одного рулона ГП:</label>
+            <input type="number" id="singleRollWidth" class="form-input">
+
+            <label class="form-label">Количество рулонов ГП (за ходку):</label>
+            <input type="number" id="rollsPerTrip" class="form-input">
+
+            <label class="form-label">Ширина маточного рулона:</label>
+            <input type="number" id="masterRollWidth" class="form-input">
+
+            <button class="calculate-btn" onclick="calculateObrez()">Рассчитать</button>
+
+            <div id="obrezResult" style="margin-top: 25px; display: none;">
+                <div class="underlined-title"><span>Результат:</span></div>
+                <p id="obrezValue" style="font-size: 18px; font-weight: bold; color: #007BFF;"></p>
+            </div>
+        </div>
 
 
     </div>
@@ -872,6 +891,26 @@
                         <div style=\"display: flex; justify-content: space-between; margin-bottom: 2px; ${unaccountedClass}\"><span>Неучтенная ширина:</span> <strong>${curW.toFixed(1)} мм</strong></div>
                         <div style=\"display: flex; justify-content: space-between;\"><span>Общая ширина обрези:</span> <strong style=\"color: #dc3545;\">${(edgeLeft + edgeRight + curW).toFixed(1)} мм</strong></div>
                     </div>`;
+        }
+
+        function calculateObrez() {
+            const totalGpWeight = parseFloat(document.getElementById('totalGpWeight').value);
+            const singleRollWidth = parseFloat(document.getElementById('singleRollWidth').value);
+            const rollsPerTrip = parseFloat(document.getElementById('rollsPerTrip').value);
+            const masterRollWidth = parseFloat(document.getElementById('masterRollWidth').value);
+
+            if (isNaN(totalGpWeight) || isNaN(singleRollWidth) || isNaN(rollsPerTrip) || isNaN(masterRollWidth)) {
+                alert("Введите корректные данные");
+                return;
+            }
+
+            const numerator = totalGpWeight;
+            const denominator = singleRollWidth * rollsPerTrip;
+            const subtract = masterRollWidth - (singleRollWidth * rollsPerTrip);
+            const result = (numerator / denominator) * subtract;
+
+            document.getElementById('obrezValue').textContent = result.toFixed(2);
+            document.getElementById('obrezResult').style.display = 'block';
         }
 
         function showReset() { document.getElementById('modalReset').style.display = 'flex'; }
