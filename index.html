@@ -293,6 +293,11 @@
 
             <div class="underlined-title"><span>Маточный рулон</span></div>
 
+            <div class="checkbox-container">
+                <input type="checkbox" id="useDoubleFoil">
+                <label for="useDoubleFoil">Сдвоенная фольга</label>
+            </div>
+
             <label class="form-label">Расстояние от шпули до края фольги (мм):</label>
             <input type="number" id="distanceToEdge" class="form-input">
 
@@ -820,10 +825,14 @@
             const tBody = document.getElementById('tableBody');
             tBody.innerHTML = ''; tTable.style.display = 'table';
 
+            const isDoubleFoil = document.getElementById('useDoubleFoil').checked;
             const DM_initial = dMaster + (2 * dEdge);
             const DM_final = document.getElementById('useRupture').checked ? dMaster + (2 * (parseFloat(document.getElementById('distanceToRupture').value) || 0)) : dMaster;
             const areaTarget = (Math.pow(DTarget, 2) - Math.pow(dTargetCore, 2)) / kCorr;
-            const areaMaster = Math.pow(DM_initial, 2) - Math.pow(DM_final, 2);
+            let areaMaster = Math.pow(DM_initial, 2) - Math.pow(DM_final, 2);
+            if (isDoubleFoil) {
+                areaMaster /= 2;
+            }
             const totalExact = areaMaster / areaTarget;
             const fullRolls = Math.floor(totalExact);
 
