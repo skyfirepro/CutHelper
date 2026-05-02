@@ -836,13 +836,19 @@
             const totalExact = areaMaster / areaTarget;
             const fullRolls = Math.floor(totalExact);
 
-            for (let i = fullRolls; i > 0; i--) {
-                const made = fullRolls - i;
-                const aBefore = areaMaster - (made * areaTarget);
-                const aAfter = areaMaster - ((made + 1) * areaTarget);
-                const distB = (Math.sqrt(aBefore + Math.pow(DM_final, 2)) - dMaster) / 2;
-                const distA = (Math.sqrt(aAfter + Math.pow(DM_final, 2)) - dMaster) / 2;
-                tBody.innerHTML += `<tr><td>${i}</td><td>${(totalExact - made).toFixed(2)}</td><td>${distB.toFixed(1)}</td><td>${distA.toFixed(1)}</td></tr>`;
+            if (fullRolls === 0) {
+                const distB = (Math.sqrt(areaMaster + Math.pow(DM_final, 2)) - dMaster) / 2;
+                const distA = distB;
+                tBody.innerHTML += `<tr><td>0</td><td>${totalExact.toFixed(2)}</td><td>${distB.toFixed(1)}</td><td>${distA.toFixed(1)}</td></tr>`;
+            } else {
+                for (let i = fullRolls; i > 0; i--) {
+                    const made = fullRolls - i;
+                    const aBefore = areaMaster - (made * areaTarget);
+                    const aAfter = areaMaster - ((made + 1) * areaTarget);
+                    const distB = (Math.sqrt(aBefore + Math.pow(DM_final, 2)) - dMaster) / 2;
+                    const distA = (Math.sqrt(aAfter + Math.pow(DM_final, 2)) - dMaster) / 2;
+                    tBody.innerHTML += `<tr><td>${i}</td><td>${(totalExact - made).toFixed(2)}</td><td>${distB.toFixed(1)}</td><td>${distA.toFixed(1)}</td></tr>`;
+                }
             }
         }
 
