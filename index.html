@@ -663,7 +663,10 @@
         <div id="obrezTab" class="tab-content">
             <h2 style="text-align: center; color: #007BFF; font-size: 18px;">Обрезь</h2>
 
-            <label class="form-label">Общий вес ГП:</label>
+            <label class="form-label">Ширина маточного рулона:</label>
+            <input type="number" id="masterRollWidth" class="form-input">
+
+            <label class="form-label">Общий вес ГП(за все ходки) :</label>
             <input type="number" id="totalGpWeight" class="form-input">
 
             <label class="form-label">Ширина одного рулона ГП:</label>
@@ -672,8 +675,18 @@
             <label class="form-label">Количество рулонов ГП (за ходку):</label>
             <input type="number" id="rollsPerTrip" class="form-input">
 
-            <label class="form-label">Ширина маточного рулона:</label>
-            <input type="number" id="masterRollWidth" class="form-input">
+
+
+            <div class="checkbox-container" style="margin-top: 20px;">
+                <input type="checkbox" id="hasDefectiveRolls" onchange="toggleDefectiveInputs()">
+                <label for="hasDefectiveRolls">Наличие бракованных рулонов</label>
+            </div>
+
+            <label class="form-label">Количество бракованных рулонов:</label>
+            <input type="number" id="defectiveCount" disabled class="form-input">
+
+            <label class="form-label">Вес одного бракованного рулона:</label>
+            <input type="number" id="defectiveWeight" disabled class="form-input">
 
             <button class="calculate-btn" onclick="calculateObrez()">Рассчитать</button>
 
@@ -910,6 +923,11 @@
                         <div style=\"display: flex; justify-content: space-between;\"><span>Общая ширина обрези:</span> <strong style=\"color: #dc3545;\">${(edgeLeft + edgeRight + curW).toFixed(1)} мм</strong></div>
                     </div>`;
         }
+        function toggleDefectiveInputs() {
+            const hasDef = document.getElementById('hasDefectiveRolls').checked;
+            document.getElementById('defectiveCount').disabled = !hasDef;
+            document.getElementById('defectiveWeight').disabled = !hasDef;
+        }
 
         function calculateObrez() {
             const totalGpWeight = parseFloat(document.getElementById('totalGpWeight').value);
@@ -925,7 +943,14 @@
             const numerator = totalGpWeight;
             const denominator = singleRollWidth * rollsPerTrip;
             const subtract = masterRollWidth - (singleRollWidth * rollsPerTrip);
-            const result = (numerator / denominator) * subtract;
+            let result = (numerator / denominator) * subtract;
+
+            const hasDef = document.getElementById('hasDefectiveRolls').checked;
+            if (hasDef) {
+                const defectiveCount = parseFloat(document.getElementById('defectiveCount').value) || 0;
+                const defectiveWeight = parseFloat(document.getElementById('defectiveWeight').value) || 0;
+                result += defectiveCount * defectiveWeight;
+            }
 
             document.getElementById('obrezValue').textContent = result.toFixed(2);
             document.getElementById('obrezResult').style.display = 'block';
