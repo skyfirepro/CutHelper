@@ -89,9 +89,9 @@
         display: block;
     }
 
-    #themeToggle {
+    #themeToggle,
+    #calculatorToggle {
         position: absolute;
-        top: 5px;
         right: 5px;
         background-color: #b5b3b3;
         border: none;
@@ -104,10 +104,123 @@
         line-height: 1;
     }
 
-    .underlined-title {
+    #themeToggle {
+        top: 5px;
+    }
+
+    #calculatorToggle {
+        top: 55px;
+    }
+
+    .calculator-display {
+        width: 100%;
+        padding: 18px 16px;
+        margin-bottom: 18px;
+        border: none;
+        border-radius: 18px;
+        font-size: 28px;
+        font-weight: bold;
+        text-align: right;
+        background-color: #eef2f7;
+        color: #111;
+    }
+
+    .calculator-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-auto-rows: 62px;
+        gap: 10px;
+    }
+
+    .calculator-grid button {
+        border: none;
+        border-radius: 18px;
+        background-color: #f6f7fb;
+        color: #1f1f1f;
+        font-size: 19px;
+        cursor: pointer;
+        box-shadow: 4px 4px 10px rgba(163, 163, 163, 0.18), -4px -4px 10px #fff;
+        transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.15s ease;
+    }
+
+    .calculator-grid button:hover {
+        filter: brightness(1.04);
+    }
+
+    .calculator-grid button:active {
+        transform: translateY(1px);
+        box-shadow: 3px 3px 8px rgba(163, 163, 163, 0.2), -3px -3px 8px #fff;
+    }
+
+    .calculator-grid .operator {
+        background-color: #dde5f3;
+        color: #1f1f1f;
+    }
+
+    .calculator-grid .action {
+        background-color: #e9edf7;
+        color: #1f1f1f;
+    }
+
+    .calculator-grid .equals-btn {
+        background-color: #ff9f0a;
+        color: #111;
+        grid-row: span 2;
+        align-self: stretch;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+        box-shadow: 4px 8px 18px rgba(255, 159, 10, 0.25);
+    }
+
+    .calculator-modal .modal-content {
+        max-width: 340px;
+        background: #f0f3f8;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 100;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .modal-content {
+        padding: 25px;
+        border-radius: 20px;
+        background: #f0f0f0;
+        text-align: center;
+        width: 100%;
+        max-width: 320px;
+    }
+
+    .calculator-modal .modal-content {
+        max-width: 340px;
+    }
+
+    .calculator-modal .modal-content {
+        padding: 20px;
+    }
+
+    .docs-flex-row {
         display: block;
         margin-top: 20px;
         margin-bottom: 15px;
+    }
+
+    .underlined-title {
+        margin-top: 10px;
+        margin-bottom: 10px;
     }
 
     .underlined-title span {
@@ -252,7 +365,7 @@
         max-width: 320px;
     }
 
-    /* Стили для вкладки Документация */
+    /* Общие стили для гибких строк и колонок */
     .docs-flex-row {
         display: flex;
         gap: 12px;
@@ -279,13 +392,14 @@
 <body>
     <div class="container">
         <button id="themeToggle" onclick="toggleTheme()">🌙</button>
+        <button id="calculatorToggle" onclick="toggleCalculator()" title="Калькулятор">🧮</button>
         <div class="tabs-nav">
             <button class="tab-btn active" onclick="openTab('rollsTab')">Количество <br> ходок</button>
-            <button class="tab-btn" onclick="openTab('shaftTab')">Раскрой</button>
-            <button class="tab-btn" onclick="openTab('shaftMiniTab')">Раскрой (мини)</button>
-            <!-- <button class="tab-btn" onclick="openTab('setupTab')">Перенастройка</button> -->
-            <button class="tab-btn" onclick="openTab('docsTab')">Документация</button>
-            <button class="tab-btn" onclick="openTab('obrezTab')">Обрезь<br>&nbsp;</button>
+            <!-- <button class="tab-btn" onclick="openTab('shaftTab')">Empty</button> -->
+            <button class="tab-btn" onclick="openTab('shaftMiniTab')">Раскрой лапши</button>
+            <button class="tab-btn" onclick="openTab('setupTab')">Настройка вала <span style='color: rgb(145, 14, 14);'>( В разработке)</span></button>
+            <button class="tab-btn" onclick="openTab('obrezTab')">Обрезь</button>
+            <button class="tab-btn" onclick="openTab('recalcTab')">Перерасчет<br>метража</button>
         </div>
 
         <div id="rollsTab" class="tab-content active">
@@ -295,10 +409,10 @@
 
             <div class="checkbox-container">
                 <input type="checkbox" id="useDoubleFoil">
-                <label for="useDoubleFoil">Сдвоенная фольга</label>
+                <label for="useDoubleFoil">Сдвоенная фольга (Для C4/1-3)</label>
             </div>
 
-            <label class="form-label">Расстояние от шпули до края фольги (мм):</label>
+            <label class="form-label">Расстояние от шпули до края рулона (мм):</label>
             <input type="number" id="distanceToEdge" class="form-input">
 
             <div class="checkbox-container rupture-container">
@@ -322,8 +436,8 @@
 
             <label class="form-label">Диаметр намоточной шпули (мм):</label>
             <select id="targetCoreSelector" class="form-select">
-                <option value="81.2">81.2 (76.2 + 2.5)</option>
-                <option value="158.4">158.4 (152.4 + 3)</option>
+                <option value="81.2">81.2 (76.2 + 2.5 * 2)</option>
+                <option value="158.4">158.4 (152.4 + 3 * 2)</option>
             </select>
 
             <div class="underlined-title"><span>Коэффициент плотности</span></div>
@@ -495,32 +609,58 @@
 
 
         <div id="setupTab" class="tab-content">
-            <h2 style="text-align: center; color: #007BFF; font-size: 18px;">Перенастройка</h2>
+            <h2 style="text-align: center; color: #007BFF; font-size: 18px;">Настройка контр. ножевого вала</h2>
             <div class="underlined-title"><span>Ширина ножевого вала (мм)</span></div>
             <select id="shaftWidthSelect" class="form-select" style="margin-bottom: 20px;">
                 <option value="1700">1700 (C4-1/3)</option>
-                <option value="1620">1620 (C4-4)</option>
+                <option value="1610">1610 (C4-4)</option>
+                <option value="1670">1670 (D1/2)</option>
             </select>
 
             <div class="underlined-title"><span>Настройка №1</span></div>
-            <label class="form-label">Ширина маточного рулона (мм):</label>
-            <input type="number" id="setupMasterWidth1" class="form-input" style="margin-bottom: 16px;">
-            <label class="form-label">Ширина заказа (мм):</label>
-            <input type="number" id="setupOrderWidth1" class="form-input" style="margin-bottom: 12px;">
-            <label class="form-label">Количество рулонов:</label>
-            <input type="number" id="setupOrderCount1" class="form-input" style="margin-bottom: 16px;">
+            
+            <div class="docs-flex-row">
+                <div class="docs-flex-col">
+                    <label class="form-label">Ширина заказа (мм):</label>
+                    <input type="number" id="setupOrderWidth1" class="form-input">
+                </div>
+                <div class="docs-flex-col">
+                    <label class="form-label">Количество рулонов:</label>
+                    <input type="number" id="setupOrderCount1" class="form-input">
+                </div>
+            </div>
 
-            <div class="underlined-title"><span>Настройка №2</span></div>
-            <label class="form-label">Ширина маточного рулона (мм):</label>
-            <input type="number" id="setupMasterWidth2" class="form-input" style="margin-bottom: 16px;">
+            <div class="form-label" style="margin-top: 18px;">Центрировать по ширине</div>
+            <div class="docs-radio-row">
+                <label style="display:inline-flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                    <input type="radio" name="centering" value="width" checked onchange="toggleSetupMasterWidth()">
+                    По ширине маточного рулона
+                    <input type="number" id="setupMasterWidth1" class="form-input" style="width: 120px; margin: 0;">
+                </label>
+                <br>
+                <label style="display:inline-flex; align-items:center; gap:8px;">
+                    <input type="radio" name="centering" value="cut" onchange="toggleSetupMasterWidth()">
+                    по ширине реза заказа ГП
+                </label>
+            </div>
+            <div class="checkbox-container" style="margin-top: 12px;">
+                <input type="checkbox" id="addEdgeSetup">
+                <label for="addEdgeSetup">Добавить кромку</label>
+            </div>
+            <label class="form-label" style="margin-top: 8px;">Ширина кромки (мм):</label>
+            <input type="number" id="edgeWidthSetup" class="form-input" placeholder="0" value="10">
 
-            <div class="underlined-title"><span>Настройка №3</span></div>
-            <label class="form-label">Ширина маточного рулона (мм):</label>
-            <input type="number" id="setupMasterWidth3" class="form-input" style="margin-bottom: 16px;">
+            <div class="checkbox-container" style="margin-top: 16px;">
+                <input type="checkbox" id="doubleKnife">
+                <label for="doubleKnife">Двойной нож</label>
+            </div>
 
-            <div class="underlined-title"><span>Настройка №4</span></div>
-            <label class="form-label">Ширина маточного рулона (мм):</label>
-            <input type="number" id="setupMasterWidth4" class="form-input" style="margin-bottom: 16px;">
+            <button class="calculate-btn" id="calculateSetupBtn" style="margin-top:12px;" onclick="calculateKnivesPosition()">Рассчитать положение ножей</button>
+
+            <div id="setupResult" style="margin-top: 12px; display: none;">
+                <div class="underlined-title"><span>Результат</span></div>
+                <div id="setupResultContent" style="font-size: 14px; color: #333;"></div>
+            </div>
 
             <div style="display:flex; justify-content:center; margin-top:30px;">
                 <svg id="counterShaftSVG" width="600" height="80" viewBox="0 0 600 80">
@@ -540,141 +680,38 @@
             </svg>
         </div>
 
-        <div id="docsTab" class="tab-content">
-            <h2 style="text-align: center; color: #007BFF; font-size: 18px;">Документация</h2>
-            <div class="underlined-title"><span>Маточный рулон</span></div>
-            <div class="docs-flex-row">
-                <div class="docs-flex-col">
-                    <label class="form-label">Ширина</label>
-                    <input type="number" class="form-input" id="mainWidth" placeholder="Введите ширину">
-                </div>
-                <div class="docs-flex-col">
-                    <label class="form-label">Вес на входе</label>
-                    <input type="number" class="form-input" placeholder="Введите вес">
-                </div>
-            </div>
-            <div class="form-label" style="margin-top: 18px;">Остался металл для других заказов</div>
-            <div class="docs-radio-row">
-                <label>
-                    <input type="radio" name="metalLeft" value="yes" checked> Да
-                </label>
-                <label>
-                    <input type="radio" name="metalLeft" value="no"> Нет
-                </label>
-            </div>
-
-            <div class="underlined-title"><span>Готовая продукция</span></div>
-            <div class="docs-flex-row">
-                <div class="docs-flex-col">
-                    <label class="form-label">Количество рулонов ГП за ходку</label>
-                    <input type="number" class="form-input" id="gpPerTrip" placeholder="Введите количество">
-                </div>
-                <div class="docs-flex-col">
-                    <label class="form-label">Количество ходок</label>
-                    <input type="number" class="form-input" id="tripsCount" placeholder="Введите количество">
-                </div>
-            </div>
-
-            <div class="docs-flex-row">
-                <div class="docs-flex-col">
-                    <label class="form-label">Вес рулона</label>
-                    <input type="number" class="form-input" id="rollWeight" placeholder="Введите вес">
-                </div>
-                <div class="docs-flex-col">
-                    <label class="form-label">Ширина рулона</label>
-                    <input type="number" class="form-input" id="rollWidth" placeholder="Введите ширину">
-                </div>
-            </div>
-
-            <label class="form-label">Брак / лишние рулоны (Вычитается из ГП)</label>
-            <input type="number" class="form-input" id="defectRolls" placeholder="Введите количество"
-                style="margin-bottom: 18px;">
-            <button class="calculate-btn" id="docsCalcBtn" style="width: 100%; margin-top: 10px;">Рассчитать</button>
-
-            <div id="docsTablesBlock" style="margin-top: 28px; display: none;">
-                <div class="underlined-title"><span>Сменное задание</span></div>
-                <table style="width:100%; border-collapse:collapse; margin-bottom: 24px; font-size: 14px;">
-                    <tr style="background:#007BFF; color:#fff;">
-                        <th style="padding:6px; border:1px solid #fff;">Количество рулонов</th>
-                        <th style="padding:6px; border:1px solid #fff;">Масса ГП</th>
-                        <th style="padding:6px; border:1px solid #fff;">ОР</th>
-                        <th style="padding:6px; border:1px solid #fff;">ПРО</th>
-                        <th style="padding:6px; border:1px solid #fff;">Остаток</th>
-                    </tr>
-                    <tr>
-                        <td id="shiftTaskRolls" style="border:1px solid #ddd; height:32px;"></td>
-                        <td id="shiftTaskMass" style="border:1px solid #ddd;"></td>
-                        <td id="shiftTaskOR" style="border:1px solid #ddd;"></td>
-                        <td id="shiftTaskPRO" style="border:1px solid #ddd;"></td>
-                        <td id="shiftTaskOstatok" style="border:1px solid #ddd;"></td>
-                    </tr>
-                </table>
-                <div class="underlined-title"><span>Паспорт рулона</span></div>
-                <table style="width:100%; border-collapse:collapse; font-size: 14px;">
-                    <tr style="background:#007BFF; color:#fff;">
-                        <th style="padding:6px; border:1px solid #fff;">Количество рулонов</th>
-                        <th style="padding:6px; border:1px solid #fff;">Масса ГП</th>
-                        <th style="padding:6px; border:1px solid #fff;">Обрезь</th>
-                        <th style="padding:6px; border:1px solid #fff;">Остаток</th>
-                    </tr>
-                    <tr>
-                        <td id="passportRolls" style="border:1px solid #ddd; height:32px;"></td>
-                        <td id="passportMass" style="border:1px solid #ddd;"></td>
-                        <td id="passportObrez" style="border:1px solid #ddd;"></td>
-                        <td id="passportOstatok" style="border:1px solid #ddd;"></td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-        <style>
-            /* Адаптив для вкладки Документация */
-            .docs-flex-row {
-                display: flex;
-                gap: 16px;
-                align-items: flex-start;
-                margin-bottom: 18px;
-                width: 100%;
-            }
-
-            .docs-flex-col {
-                flex: 1;
-                min-width: 0;
-            }
-
-            .docs-radio-row {
-                display: flex;
-                gap: 18px;
-                margin: 8px 0 24px 0;
-            }
-
-            @media (max-width: 600px) {
-                .docs-flex-row {
-                    flex-direction: column;
-                    gap: 8px;
-                }
-
-                .docs-radio-row {
-                    flex-direction: column;
-                    gap: 8px;
-                }
-            }
-        </style>
-
         <div id="obrezTab" class="tab-content">
             <h2 style="text-align: center; color: #007BFF; font-size: 18px;">Обрезь</h2>
 
             <label class="form-label">Ширина маточного рулона:</label>
             <input type="number" id="masterRollWidth" class="form-input">
 
-            <label class="form-label">Общий вес ГП(за все ходки) :</label>
+            <label class="form-label">Общий вес ГП и забракованных ГП (за все ходки) :</label>
             <input type="number" id="totalGpWeight" class="form-input">
 
-            <label class="form-label">Ширина одного рулона ГП:</label>
-            <input type="number" id="singleRollWidth" class="form-input">
+            <div style="margin-top: 18px;">
+                <div class="checkbox-container">
+                    <input type="radio" id="obrezModeSeparate" name="obrezMode" value="separate" checked onchange="toggleObrezMode()">
+                    <label for="obrezModeSeparate">Ширина одного рулона ГП + количество рулонов ГП</label>
+                </div>
+                <div class="checkbox-container">
+                    <input type="radio" id="obrezModeTotal" name="obrezMode" value="total" onchange="toggleObrezMode()">
+                    <label for="obrezModeTotal">Общая ширина ГП</label>
+                </div>
+            </div>
 
-            <label class="form-label">Количество рулонов ГП (за ходку):</label>
-            <input type="number" id="rollsPerTrip" class="form-input">
+            <div id="obrezSeparateFields">
+                <label class="form-label">Ширина одного рулона ГП:</label>
+                <input type="number" id="singleRollWidth" class="form-input">
 
+                <label class="form-label">Количество рулонов ГП (за ходку):</label>
+                <input type="number" id="rollsPerTrip" class="form-input">
+            </div>
+
+            <div id="obrezTotalWidthField" style="display: none;">
+                <label class="form-label">Общая ширина ГП:</label>
+                <input type="number" id="totalGpWidth" class="form-input">
+            </div>
 
 
             <div class="checkbox-container" style="margin-top: 20px;">
@@ -696,6 +733,31 @@
             </div>
         </div>
 
+        <div id="recalcTab" class="tab-content">
+            <h2 style="text-align: center; color: #007BFF; font-size: 18px;">Перерасчет метража с учетом изменения диаметра</h2>
+
+            <label class="form-label">Диаметр намоточной шпули (мм):</label>
+            <select id="recalcSpoolDiameter" class="form-select">
+                <option value="81.2">81.2 (76.2 + 2.5 * 2)</option>
+                <option value="158.4">158.4 (152.4 + 3 * 2)</option>
+            </select>
+
+            <label class="form-label">Исходный диаметр рулона (мм):</label>
+            <input type="number" id="recalcOriginalDiameter" class="form-input">
+
+            <label class="form-label">Исходный метраж:</label>
+            <input type="number" id="recalcOriginalLength" class="form-input">
+
+            <label class="form-label">Нужный диаметр рулона (мм):</label>
+            <input type="number" id="recalcTargetDiameter" class="form-input">
+
+            <button class="calculate-btn" onclick="calculateRecalc()">Рассчитать</button>
+
+            <div id="recalcResult" style="margin-top: 25px; display: none;">
+                <div class="underlined-title"><span>Результат</span></div>
+                <p id="recalcValue" style="font-size: 18px; font-weight: bold; color: #007BFF;"></p>
+            </div>
+        </div>
 
     </div>
 
@@ -710,94 +772,103 @@
             <button class="reset-btn" onclick="closeReset()">Нет</button>
         </div>
     </div>
+
+    <div id="calculatorModal" class="modal calculator-modal" onclick="closeCalculator(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <input id="calculatorDisplay" class="calculator-display" type="text" value="0" disabled>
+            <div class="calculator-grid">
+                <button type="button" class="action" onclick="clearCalculator()">C</button>
+                <button type="button" class="operator" onclick="appendCalculator('/')">÷</button>
+                <button type="button" class="operator" onclick="appendCalculator('*')">×</button>
+                <button type="button" class="action" onclick="deleteCalculator()">⌫</button>
+
+                <button type="button" onclick="appendCalculator('7')">7</button>
+                <button type="button" onclick="appendCalculator('8')">8</button>
+                <button type="button" onclick="appendCalculator('9')">9</button>
+                <button type="button" class="operator" onclick="appendCalculator('-')">−</button>
+
+                <button type="button" onclick="appendCalculator('4')">4</button>
+                <button type="button" onclick="appendCalculator('5')">5</button>
+                <button type="button" onclick="appendCalculator('6')">6</button>
+                <button type="button" class="operator" onclick="appendCalculator('+')">+</button>
+
+                
+                <button type="button" onclick="appendCalculator('1')">1</button>
+                <button type="button" onclick="appendCalculator('2')">2</button>
+                <button type="button" onclick="appendCalculator('3')">3</button>
+                <button type="button" class="action equals-btn" onclick="evaluateCalculator()">=</button>
+
+                <button type="button" onclick="appendCalculator('%')">%</button>
+                <button type="button" onclick="appendCalculator('0')">0</button>
+                <button type="button" onclick="appendCalculator(',')">,</button>
+                
+                
+            </div>
+        </div>
     </div>
 
     <script>
-        // --- Документация: расчёт таблиц ---
-        function updateDocsTables() {
-            // Показываем блок с таблицами при расчете
-            document.getElementById('docsTablesBlock').style.display = 'block';
-            const rollsPerTrip = parseFloat(document.getElementById('gpPerTrip').value) || 0;
-            const trips = parseFloat(document.getElementById('tripsCount').value) || 0;
-            const rollWeight = parseFloat(document.getElementById('rollWeight').value) || 0;
-            const rollWidth = parseFloat(document.getElementById('rollWidth').value) || 0;
-            const mainWidth = parseFloat(document.getElementById('mainWidth').value) || 0;
-            const inputMasterWeight = parseFloat(document.querySelector('input[placeholder="Введите вес"]').value) || 0;
-            const defectRolls = parseFloat(document.getElementById('defectRolls').value) || 0;
-            // Радиокнопки
-            const metalLeftYes = document.querySelector('input[name="metalLeft"][value="yes"]:checked');
-            const metalLeftNo = document.querySelector('input[name="metalLeft"][value="no"]:checked');
-
-            const totalRolls = rollsPerTrip * trips;
-            const totalCorrectedRolls = totalRolls - defectRolls;
-            const totalMass = rollWeight * rollsPerTrip * trips;
-            const defectMass = defectRolls * rollWeight;
-            // Масса с учетом брака
-            const totalMassCorrected = totalMass - defectMass;
-            document.getElementById('shiftTaskRolls').textContent = totalCorrectedRolls ? totalCorrectedRolls : '';
-            document.getElementById('passportRolls').textContent = totalCorrectedRolls ? totalCorrectedRolls : '';
-            document.getElementById('shiftTaskMass').textContent = totalMassCorrected ? totalMassCorrected : '';
-            document.getElementById('passportMass').textContent = totalMassCorrected ? totalMassCorrected : '';
-
-            // ОР
-            const allRollsWidth = rollWidth * rollsPerTrip;
-            let OR = '';
-            if (allRollsWidth > 0) {
-                OR = (totalMass / allRollsWidth) * (mainWidth - allRollsWidth);
-                OR = OR + defectMass; // Добавляем массу брака к ОР
-            }
-            document.getElementById('shiftTaskOR').textContent = (OR && !isNaN(OR)) ? OR.toFixed(2) : '';
-
-            // Остаток/ПРО
-            let ostatok = '';
-            let PRO = '';
-            if (inputMasterWeight > 0 && totalMass > 0) {
-                const temp = inputMasterWeight - totalMassCorrected - (parseFloat(OR) || 0);
-                if (metalLeftYes) {
-                    ostatok = !isNaN(temp) ? temp.toFixed(2) : '';
-                    PRO = '-';
-                } else if (metalLeftNo) {
-                    PRO = !isNaN(temp) ? temp.toFixed(2) : '';
-                    ostatok = '-';
-                } else {
-                    ostatok = '';
-                    PRO = '';
-                }
-            } else {
-                ostatok = '';
-                PRO = '';
-            }
-            document.getElementById('shiftTaskOstatok').textContent = ostatok;
-            document.getElementById('shiftTaskPRO').textContent = PRO;
-
-            // Паспорт рулона: Обрезь и Остаток
-            let obrez = '';
-            let passportOstatok = '';
-            if (metalLeftYes) {
-                passportOstatok = ostatok;
-                obrez = (parseFloat(OR) || 0) + (PRO !== '-' ? parseFloat(PRO) || 0 : 0);
-                obrez = obrez ? obrez.toFixed(2) : '';
-            } else if (metalLeftNo) {
-                passportOstatok = '-';
-                obrez = (parseFloat(OR) || 0) + (PRO !== '-' ? parseFloat(PRO) || 0 : 0);
-                obrez = obrez ? obrez.toFixed(2) : '';
-            } else {
-                passportOstatok = '';
-                obrez = '';
-            }
-            document.getElementById('passportOstatok').textContent = passportOstatok;
-            document.getElementById('passportObrez').textContent = obrez;
-        }
-        // Вешаем обработчики
         document.addEventListener('DOMContentLoaded', function () {
-            // Кнопка Рассчитать
-            const calcBtn = document.getElementById('docsCalcBtn');
-            if (calcBtn) calcBtn.addEventListener('click', updateDocsTables);
-            // Радиокнопки
-            document.querySelectorAll('input[name="metalLeft"]').forEach(radio => {
-                radio.addEventListener('change', updateDocsTables);
-            });
+            toggleObrezMode();
+            toggleSetupMasterWidth();
         });
+        function toggleSetupMasterWidth() {
+            const masterInput = document.getElementById('setupMasterWidth1');
+            const centerMode = document.querySelector('input[name="centering"]:checked')?.value;
+            masterInput.disabled = centerMode !== 'width';
+        }
+        function toggleCalculator() {
+            const modal = document.getElementById('calculatorModal');
+            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+            if (modal.style.display === 'flex') {
+                updateCalculatorDisplay();
+            }
+        }
+        function closeCalculator(event) {
+            if (event.target.id === 'calculatorModal') {
+                document.getElementById('calculatorModal').style.display = 'none';
+            }
+        }
+        function appendCalculator(value) {
+            const display = document.getElementById('calculatorDisplay');
+            let current = display.value;
+            if (current === 'Ошибка' || !current) {
+                current = '';
+            }
+            if (value === ',' && current.slice(-1) === ',') return;
+            if (value === '%' && current === '') return;
+            if (current === '0' && value !== ',' && value !== '%') {
+                current = '';
+            }
+            current += value;
+            display.value = current;
+        }
+        function clearCalculator() {
+            document.getElementById('calculatorDisplay').value = '0';
+        }
+        function deleteCalculator() {
+            const display = document.getElementById('calculatorDisplay');
+            let current = display.value;
+            current = current.slice(0, -1);
+            display.value = current === '' ? '0' : current;
+        }
+        function evaluateCalculator() {
+            const display = document.getElementById('calculatorDisplay');
+            let expression = display.value.replace(/,/g, '.');
+            expression = expression.replace(/%/g, '/100');
+            try {
+                const result = Function('return ' + expression)();
+                display.value = (Number.isFinite(result) ? result : 'Ошибка').toString();
+            } catch (e) {
+                display.value = 'Ошибка';
+            }
+        }
+        function updateCalculatorDisplay() {
+            const display = document.getElementById('calculatorDisplay');
+            if (!display.value) {
+                display.value = '0';
+            }
+        }
         function toggleEdgeFields() {
             const split = document.getElementById('splitEdges').checked;
             document.getElementById('edgeWidth').disabled = split;
@@ -929,20 +1000,61 @@
             document.getElementById('defectiveWeight').disabled = !hasDef;
         }
 
+        function toggleObrezMode() {
+            const mode = document.querySelector('input[name="obrezMode"]:checked').value;
+            const separateFields = document.getElementById('obrezSeparateFields');
+            const totalWidthField = document.getElementById('obrezTotalWidthField');
+            const singleRollWidth = document.getElementById('singleRollWidth');
+            const rollsPerTrip = document.getElementById('rollsPerTrip');
+            const totalGpWidth = document.getElementById('totalGpWidth');
+
+            if (mode === 'separate') {
+                separateFields.style.display = 'block';
+                totalWidthField.style.display = 'none';
+                singleRollWidth.disabled = false;
+                rollsPerTrip.disabled = false;
+                totalGpWidth.disabled = true;
+            } else {
+                separateFields.style.display = 'none';
+                totalWidthField.style.display = 'block';
+                singleRollWidth.disabled = true;
+                rollsPerTrip.disabled = true;
+                totalGpWidth.disabled = false;
+            }
+        }
+
         function calculateObrez() {
             const totalGpWeight = parseFloat(document.getElementById('totalGpWeight').value);
-            const singleRollWidth = parseFloat(document.getElementById('singleRollWidth').value);
-            const rollsPerTrip = parseFloat(document.getElementById('rollsPerTrip').value);
             const masterRollWidth = parseFloat(document.getElementById('masterRollWidth').value);
+            const mode = document.querySelector('input[name="obrezMode"]:checked').value;
 
-            if (isNaN(totalGpWeight) || isNaN(singleRollWidth) || isNaN(rollsPerTrip) || isNaN(masterRollWidth)) {
-                alert("Введите корректные данные");
-                return;
+            let denominator;
+            let subtract;
+
+            if (mode === 'separate') {
+                const singleRollWidth = parseFloat(document.getElementById('singleRollWidth').value);
+                const rollsPerTrip = parseFloat(document.getElementById('rollsPerTrip').value);
+
+                if (isNaN(totalGpWeight) || isNaN(singleRollWidth) || isNaN(rollsPerTrip) || isNaN(masterRollWidth)) {
+                    alert("Введите корректные данные");
+                    return;
+                }
+
+                denominator = singleRollWidth * rollsPerTrip;
+                subtract = masterRollWidth - denominator;
+            } else {
+                const totalGpWidth = parseFloat(document.getElementById('totalGpWidth').value);
+
+                if (isNaN(totalGpWeight) || isNaN(totalGpWidth) || isNaN(masterRollWidth)) {
+                    alert("Введите корректные данные");
+                    return;
+                }
+
+                denominator = totalGpWidth;
+                subtract = masterRollWidth - totalGpWidth;
             }
 
             const numerator = totalGpWeight;
-            const denominator = singleRollWidth * rollsPerTrip;
-            const subtract = masterRollWidth - (singleRollWidth * rollsPerTrip);
             let result = (numerator / denominator) * subtract;
 
             const hasDef = document.getElementById('hasDefectiveRolls').checked;
@@ -954,6 +1066,100 @@
 
             document.getElementById('obrezValue').textContent = result.toFixed(2);
             document.getElementById('obrezResult').style.display = 'block';
+        }
+
+        function calculateRecalc() {
+            const spoolDiameter = parseFloat(document.getElementById('recalcSpoolDiameter').value);
+            const originalDiameter = parseFloat(document.getElementById('recalcOriginalDiameter').value);
+            const originalLength = parseFloat(document.getElementById('recalcOriginalLength').value);
+            const targetDiameter = parseFloat(document.getElementById('recalcTargetDiameter').value);
+
+            if (isNaN(spoolDiameter) || isNaN(originalDiameter) || isNaN(originalLength) || isNaN(targetDiameter)) {
+                alert("Введите корректные данные");
+                return;
+            }
+
+            if (originalDiameter <= spoolDiameter) {
+                alert("Исходный диаметр рулона должен быть больше диаметра шпули.");
+                return;
+            }
+
+            if (targetDiameter <= spoolDiameter) {
+                alert("Нужный диаметр рулона должен быть больше диаметра шпули.");
+                return;
+            }
+
+            const originalArea = Math.pow(originalDiameter, 2) - Math.pow(spoolDiameter, 2);
+            const targetArea = Math.pow(targetDiameter, 2) - Math.pow(spoolDiameter, 2);
+            if (originalArea <= 0 || targetArea <= 0) {
+                alert("Диаметры заданы неверно.");
+                return;
+            }
+
+            const resultLength = originalLength * (targetArea / originalArea);
+            document.getElementById('recalcValue').textContent = `Нужный метраж: ${resultLength.toFixed(2)}`;
+            document.getElementById('recalcResult').style.display = 'block';
+        }
+
+        function calculateKnivesPosition() {
+            const shaft = parseFloat(document.getElementById('shaftWidthSelect').value);
+            const orderWidth = parseFloat(document.getElementById('setupOrderWidth1').value);
+            const orderCount = parseInt(document.getElementById('setupOrderCount1').value) || 0;
+            const master = parseFloat(document.getElementById('setupMasterWidth1').value);
+            const centerModeElem = document.querySelector('input[name="centering"]:checked');
+            const centerMode = centerModeElem ? centerModeElem.value : 'width';
+            const addEdge = document.getElementById('addEdgeSetup') ? document.getElementById('addEdgeSetup').checked : false;
+            const edgeWidth = parseFloat(document.getElementById('edgeWidthSetup').value) || 0;
+            const doubleKnife = document.getElementById('doubleKnife').checked;
+
+            if (isNaN(shaft) || isNaN(orderWidth) || orderCount <= 0) {
+                alert('Введите корректные значения: ширина вала, ширина заказа и количество рулонов.');
+                return;
+            }
+
+            if (centerMode === 'width' && isNaN(master)) {
+                alert('Для центрирования по ширине маточного рулона введите ширину маточного рулона.');
+                return;
+            }
+
+            let offset;
+            if (centerMode === 'width') {
+                offset = (shaft - master) / 2;
+                if (addEdge) offset += edgeWidth;
+            } else {
+                offset = (shaft - orderWidth) / 2;
+            }
+
+            // Собираем позиции ножей (положение первого ножа от левого края в мм)
+            const positions = [];
+            for (let i = 0; i < orderCount; i++) {
+                positions.push(offset + i * orderWidth);
+            }
+
+            // Проверки — не вылезают ли позиции за пределы вала
+            const lastPos = positions.length ? positions[positions.length - 1] : offset;
+            const overflow = lastPos + 0 > shaft; // если последний нож выходит за предел
+
+            // Формируем вывод
+            let html = '';
+            html += `<div style="margin-bottom:8px;"><strong>Отступ от левого края до первого ножа:</strong> ${offset.toFixed(1)} мм</div>`;
+            positions.forEach((p, idx) => {
+                html += `<div>Положение ножа ${idx + 1}: <strong>${p.toFixed(1)} мм</strong></div>`;
+                if (idx < positions.length - 1) {
+                    html += `<div style="margin-left:10px; color:#555;">Расстояние до следующего ножа: <strong>${orderWidth.toFixed(1)} мм</strong></div>`;
+                }
+            });
+            if (doubleKnife) {
+                html += `<div style="margin-top:8px; color:#007BFF;"><em>Опция "Двойной нож" включена — учитывайте пары ножей при установке.</em></div>`;
+            }
+            if (overflow) {
+                html += `<div style="margin-top:8px; color:#dc3545;"><strong>Внимание:</strong> последнее положение ножа выходит за пределы вала (${shaft} мм).</div>`;
+            }
+
+            const resultBlock = document.getElementById('setupResult');
+            const resultContent = document.getElementById('setupResultContent');
+            resultContent.innerHTML = html;
+            resultBlock.style.display = 'block';
         }
 
         function showReset() { document.getElementById('modalReset').style.display = 'flex'; }
