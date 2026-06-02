@@ -42,7 +42,7 @@
         max-width: 450px;
         /* Максимальная ширина на ПК */
         transition: background-color 0.3s, color 0.3s;
-        padding: 20px;
+        padding: 0px 20px 20px;
         position: relative;
         margin: 10px auto;
         /* Центрирование */
@@ -55,7 +55,6 @@
         /* Чтобы кнопки могли переноситься, если экран совсем узкий */
         gap: 8px;
         margin-bottom: 20px;
-        padding-right: 40px;
         /* Место для кнопки переключения темы */
     }
 
@@ -92,7 +91,6 @@
     #themeToggle,
     #calculatorToggle {
         position: absolute;
-        right: 5px;
         background-color: #b5b3b3;
         border: none;
         padding: 10px;
@@ -106,10 +104,12 @@
 
     #themeToggle {
         top: 5px;
+        right: 60px;
     }
 
     #calculatorToggle {
-        top: 55px;
+        top: 5px;
+        right: 5px;
     }
 
     .calculator-display {
@@ -307,6 +307,36 @@
         color: white;
     }
 
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .defect-result-table {
+        width: 100%;
+        table-layout: fixed;
+    }
+
+    .defect-result-table th,
+    .defect-result-table td {
+        white-space: normal;
+        word-break: break-word;
+        min-width: 0;
+    }
+
+    .defect-result-table th {
+        background-color: #007BFF;
+        color: white;
+    }
+
+    @media (max-width: 420px) {
+        .defect-result-table th,
+        .defect-result-table td {
+            font-size: 11px;
+            padding: 6px 5px;
+        }
+    }
+
     /* Визуализация вала — делаем адаптивной */
     #shaftVisual,
     #counterShaftSVG {
@@ -370,6 +400,19 @@
         display: flex;
         gap: 12px;
         margin-bottom: 15px;
+        flex-wrap: wrap;
+    }
+
+    .defect-flex-row {
+        display: flex;
+        gap: 8px;
+        align-items: flex-end;
+        flex-wrap: wrap;
+    }
+
+    .defect-flex-row .docs-flex-col {
+        flex: 1 1 calc(50% - 4px);
+        min-width: calc(50% - 4px);
     }
 
     .docs-flex-col {
@@ -396,6 +439,16 @@
             gap: 0;
         }
 
+        .defect-flex-row {
+            flex-direction: row;
+            gap: 8px;
+        }
+
+        .defect-flex-row .docs-flex-col {
+            flex: 1 1 calc(50% - 4px);
+            min-width: calc(50% - 4px);
+        }
+
         .tab-btn {
             font-size: 10px;
         }
@@ -405,16 +458,17 @@
 
 <body>
     <div class="container">
+        <h1 style="margin-bottom: 20px; text-align: center;">OriO Helper</h1>
         <button id="themeToggle" onclick="toggleTheme()">🌙</button>
         <button id="calculatorToggle" onclick="toggleCalculator()" title="Калькулятор">🧮</button>
         <div class="tabs-nav">
             <button class="tab-btn active" onclick="openTab(event,'rollsTab')">Количество <br> ходок</button>
             <!-- <button class="tab-btn" onclick="openTab(event,'shaftTab')">Empty</button> -->
+            <button class="tab-btn" onclick="openTab(event,'defectTransferTab')">Перенос дефектов</button>
             <button class="tab-btn" onclick="openTab(event,'shaftMiniTab')">Раскрой лапши</button>
             <button class="tab-btn" onclick="openTab(event,'setupTab')">Настройка вала <span style='color: rgb(145, 14, 14);'>( В разработке)</span></button>
             <button class="tab-btn" onclick="openTab(event,'obrezTab')">Подсчет обрези</button>
             <button class="tab-btn" onclick="openTab(event,'recalcTab')">Перерасчет<br>метража</button>
-            <button class="tab-btn" onclick="openTab(event,'defectTransferTab')">Перенос дефектов</button>
             <button class="tab-btn" onclick="openTab(event,'thicknessMeasurementTab')">Измерение толщины</button>
             <button class="tab-btn" onclick="openTab(event,'rollWeightTab')">Вес рулона</button>
         </div>
@@ -430,7 +484,7 @@
             </div>
 
             <label class="form-label">Расстояние от шпули до края рулона (мм):</label>
-            <input type="number" id="distanceToEdge" class="form-input">
+            <input type="number" id="distanceToEdge" class="form-input" step="any">
 
             <div class="checkbox-container rupture-container">
                 <input type="checkbox" id="useRupture" onchange="toggleRuptureField()">
@@ -449,17 +503,17 @@
             <div class="underlined-title"><span>Намоточный рулон</span></div>
 
             <label class="form-label">Номинальный диаметр (мм):</label>
-            <input type="number" id="targetOuter" class="form-input">
+            <input type="number" id="targetOuter" class="form-input" step="any">
 
             <label class="form-label">Диаметр намоточной шпули (мм):</label>
             <select id="targetCoreSelector" class="form-select">
                 <option value="81.2">81.2 (76.2 + 2.5 * 2)</option>
                 <option value="158.4">158.4 (152.4 + 3 * 2)</option>
-                <option value="300">300</option>
+                <option value="300">300 (150 + 75 * 2)</option>
             </select>
 
-            <div class="underlined-title"><span>Коэффициент плотности</span></div>
-            <input type="number" id="densityCorrection" value="0.98" step="0.01" class="form-input">
+            <div class="underlined-title"><span>Плотность намотки (%)</span></div>
+            <input type="number" id="densityCorrection" value="98.00" step="any" class="form-input">
 
             <button class="calculate-btn" onclick="calculateRolls()">Рассчитать</button>
             <button class="reset-btn" onclick="showReset()">Сбросить данные</button>
@@ -782,28 +836,28 @@
 
             <div class="underlined-title"><span>Параметры рулона</span></div>
             <label class="form-label">Толщина фольги (мкм):</label>
-            <input type="number" id="foilThickness" class="form-input" step="0.001">
+            <input type="number" id="foilThickness" class="form-input" step="any">
             <label class="form-label">Диаметр шпули(мм):</label>
-            <input type="number" id="spoolOuterDiameter" class="form-input" step="0.1" value="158.4">
+            <input type="number" id="spoolOuterDiameter" class="form-input" step="any" value="158.4">
             <label class="form-label">Диаметр полного рулона (мм):</label>
-            <input type="number" id="rollOuterDiameter" class="form-input" step="0.1">
-            <label class="form-label">Длина фольги в рулоне (м) (опционально, для идеально точного расчета):</label>
-            <input type="number" id="actualRollLength" class="form-input" step="0.01" placeholder="0.00">
+            <input type="number" id="rollOuterDiameter" class="form-input" step="any">
+            <label class="form-label">Длина фольги в рулоне (м) (опционально, для максимально точного расчета):</label>
+            <input type="number" id="actualRollLength" class="form-input" step="any">
 
             <div id="defectZonesContainer">
                 <div class="defect-zone" id="defectZone1" data-zone="1">
                     <div class="underlined-title" style="display: flex; justify-content: space-between; align-items: center;">
-                        <span>Дефектная зона №<span class="zone-number">1</span></span>
+                        <span>Зона №<span class="zone-number">1</span></span>
                         <button type="button" class="zone-delete-btn hidden" style="padding: 6px 10px; background-color: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold;" onclick="removeDefectZone(1)">✕ Удалить</button>
                     </div>
-                    <div class="docs-flex-row" style="gap: 8px; align-items: flex-end; margin-top: 10px;">
+                    <div class="defect-flex-row" style="margin-top: 10px;">
                         <div class="docs-flex-col">
                             <label class="form-label">Начальный метраж (м):</label>
-                            <input type="number" class="form-input defect-start" step="0.01" placeholder="0.00">
+                            <input type="number" class="form-input defect-start" step="0.01">
                         </div>
                         <div class="docs-flex-col">
                             <label class="form-label">Конечный метраж (м):</label>
-                            <input type="number" class="form-input defect-end" step="0.01" placeholder="0.00">
+                            <input type="number" class="form-input defect-end" step="0.01">
                         </div>
                     </div>
                 </div>
@@ -816,18 +870,20 @@
 
             <div id="defectTransferResult" style="margin-top: 25px; display: none;">
                 <div class="underlined-title"><span>Результат</span></div>
-                <table id="defectResultTable" style="width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px;">
-                    <thead>
-                        <tr style="background-color: #007BFF;">
-                            <th style="border: 1px solid #ddd; padding: 8px; color: white; text-align: center;">Зона</th>
-                            <th style="border: 1px solid #ddd; padding: 8px; color: white; text-align: center;">Начало (мм)</th>
-                            <th style="border: 1px solid #ddd; padding: 8px; color: white; text-align: center;">Конец (мм)</th>
-                            <th style="border: 1px solid #ddd; padding: 8px; color: white; text-align: center;">Ширина метки (мм)</th>
-                            <th style="border: 1px solid #ddd; padding: 8px; color: white; text-align: center;">Протяженность (м)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="defectResultBody"></tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="defect-result-table" id="defectResultTable" style="width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px;">
+                        <thead>
+                            <tr style="background-color: #007BFF;">
+                                <th style="border: 1px solid #ddd; padding: 8px; color: white; text-align: center;">Зона</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; color: white; text-align: center;">Начало зоны от шпули (мм)</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; color: white; text-align: center;">Конец зоны от шпули (мм)</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; color: white; text-align: center;">Ширина метки (мм)</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; color: white; text-align: center;">Протяженность (м)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="defectResultBody"></tbody>
+                    </table>
+                </div>
                 <p id="defectTransferInfo" style="font-size: 12px; color: #666; margin-top: 10px;"></p>
             </div>
         </div>
@@ -863,13 +919,14 @@
                 <option value="2.71">8011 (ρ = 2,71 г/см³)</option>
                 <option value="2.74">8006 (ρ = 2,74 г/см³)</option>
             </select>
-            <label class="form-label">Коэффициент плотности намотки:</label>
-            <input type="number" id="windingDensity" class="form-input" step="0.01" value="1.00" placeholder="1.00">
+            <label class="form-label">Плотность намотки (%)</label>
+            <input type="number" id="windingDensity" class="form-input" step="0.1" value="100.0" placeholder="96.8">
+            <p style="font-size: 12px; color: #666; margin-top: 5px;">Введите плотность намотки в процентах, например 96.8.</p>
             <button class="calculate-btn" onclick="calculateRollWeight()">Рассчитать</button>
             <div id="rollWeightResult" style="margin-top: 20px; display: none;">
                 <div class="underlined-title"><span>Результат</span></div>
                 <p id="rollWeightValue" style="font-size: 18px; font-weight: bold; color: #007BFF;"></p>
-                <p style="font-size: 12px; color: #666; margin-top: 10px;">Вес рулона вычисляется как: объем фольги × плотность × коэффициент плотности намотки.</p>
+                <p style="font-size: 12px; color: #666; margin-top: 10px;">Вес рулона вычисляется как: объем фольги × плотность × (плотность намотки / 100).</p>
             </div>
         </div>
     </div>
@@ -1019,9 +1076,10 @@
             const dEdge = parseFloat(document.getElementById('distanceToEdge').value);
             const DTarget = parseFloat(document.getElementById('targetOuter').value);
             const dMaster = parseFloat(document.getElementById('masterCore').value);
-            const kCorr = parseFloat(document.getElementById('densityCorrection').value);
+            const kCorrPercent = parseFloat(document.getElementById('densityCorrection').value);
+            const kCorr = kCorrPercent / 100;
             const dTargetCore = parseFloat(document.getElementById('targetCoreSelector').value);
-            if (isNaN(dEdge) || isNaN(DTarget)) return;
+            if (isNaN(dEdge) || isNaN(DTarget) || isNaN(kCorrPercent)) return;
 
             const tTable = document.getElementById('resultsTable');
             const tBody = document.getElementById('tableBody');
@@ -1032,6 +1090,7 @@
             const DM_final = document.getElementById('useRupture').checked ? dMaster + (2 * (parseFloat(document.getElementById('distanceToRupture').value) || 0)) : dMaster;
             const areaTarget = (Math.pow(DTarget, 2) - Math.pow(dTargetCore, 2)) / kCorr;
             let areaMaster = Math.pow(DM_initial, 2) - Math.pow(DM_final, 2);
+            const masterAreaMultiplier = isDoubleFoil ? 2 : 1;
             if (isDoubleFoil) {
                 areaMaster /= 2;
             }
@@ -1039,7 +1098,7 @@
             const fullRolls = Math.floor(totalExact);
 
             if (fullRolls === 0) {
-                const distB = (Math.sqrt(areaMaster + Math.pow(DM_final, 2)) - dMaster) / 2;
+                const distB = (Math.sqrt(masterAreaMultiplier * areaMaster + Math.pow(DM_final, 2)) - dMaster) / 2;
                 const distA = distB;
                 tBody.innerHTML += `<tr><td>0</td><td>${totalExact.toFixed(2)}</td><td>${distB.toFixed(1)}</td><td>${distA.toFixed(1)}</td></tr>`;
             } else {
@@ -1047,8 +1106,8 @@
                     const made = fullRolls - i;
                     const aBefore = areaMaster - (made * areaTarget);
                     const aAfter = areaMaster - ((made + 1) * areaTarget);
-                    const distB = (Math.sqrt(aBefore + Math.pow(DM_final, 2)) - dMaster) / 2;
-                    const distA = (Math.sqrt(aAfter + Math.pow(DM_final, 2)) - dMaster) / 2;
+                    const distB = (Math.sqrt(masterAreaMultiplier * aBefore + Math.pow(DM_final, 2)) - dMaster) / 2;
+                    const distA = (Math.sqrt(masterAreaMultiplier * aAfter + Math.pow(DM_final, 2)) - dMaster) / 2;
                     tBody.innerHTML += `<tr><td>${i}</td><td>${(totalExact - made).toFixed(2)}</td><td>${distB.toFixed(1)}</td><td>${distA.toFixed(1)}</td></tr>`;
                 }
             }
@@ -1227,10 +1286,10 @@
             const newZoneHtml = `
                 <div class="defect-zone" id="defectZone${newZoneNum}" data-zone="${newZoneNum}" style="margin-top: 15px;">
                     <div class="underlined-title" style="display: flex; justify-content: space-between; align-items: center;">
-                        <span>Дефектная зона №<span class="zone-number">${newZoneNum}</span></span>
+                        <span>Зона №<span class="zone-number">${newZoneNum}</span></span>
                         <button type="button" class="zone-delete-btn" style="padding: 6px 10px; background-color: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold;" onclick="removeDefectZone(${newZoneNum})">✕ Удалить</button>
                     </div>
-                    <div class="docs-flex-row" style="gap: 8px; align-items: flex-end; margin-top: 10px;">
+                    <div class="defect-flex-row" style="margin-top: 10px;">
                         <div class="docs-flex-col">
                             <label class="form-label">Начальный метраж (м):</label>
                             <input type="number" class="form-input defect-start" step="0.01" placeholder="0.00">
@@ -1370,10 +1429,10 @@
                 if (Math.abs(diffPercent) >= 2) {
                     infoText = `⚠ Теоретическая длина: ${theoreticalLength.toFixed(2)} м. Разница с фактической: ${diffPercent.toFixed(1)}%. Проверьте толщину или диаметры. Расчёт выполнен с использованием фактической длины и скорректированной эффективной толщины.`;
                 } else {
-                    infoText = `✓ Параметры согласованы (разница ${Math.abs(diffPercent).toFixed(1)}%). Расчёт выполнен с использованием фактической длины и скорректированной эффективной толщины.`;
+                    infoText = `✓ Параметры теоретической и фактической длины согласованы (разница ${Math.abs(diffPercent).toFixed(1)}%). Расчёт выполнен с использованием фактической длины и скорректированной эффективной толщины.`;
                 }
             } else {
-                infoText = `Расчёт выполнен по теоретической длине (${theoreticalLength.toFixed(2)} м). Введите фактическую длину для более точного расчёта.`;
+                infoText = `Расчёт выполнен по теоретической длине (${theoreticalLength.toFixed(2)} м). Введите фактическую длину для максималььно точного расчёта.`;
             }
 
             document.getElementById('defectTransferInfo').textContent = infoText;
@@ -1399,9 +1458,10 @@
             const rollDiameter = parseFloat(document.getElementById('rollOuterDiameterWeight').value);
             const rollWidth = parseFloat(document.getElementById('rollWidth').value);
             const density = parseFloat(document.getElementById('rollAlloySelect').value);
-            const windingDensity = parseFloat(document.getElementById('windingDensity').value);
+            const windingDensityPercent = parseFloat(document.getElementById('windingDensity').value);
+            const windingDensity = windingDensityPercent / 100;
 
-            if (isNaN(spoolDiameter) || isNaN(rollDiameter) || isNaN(rollWidth) || isNaN(density) || isNaN(windingDensity) || spoolDiameter <= 0 || rollDiameter <= 0 || rollWidth <= 0 || windingDensity <= 0) {
+            if (isNaN(spoolDiameter) || isNaN(rollDiameter) || isNaN(rollWidth) || isNaN(density) || isNaN(windingDensityPercent) || spoolDiameter <= 0 || rollDiameter <= 0 || rollWidth <= 0 || windingDensity <= 0) {
                 alert('Введите корректные параметры рулона, ширину и плотность намотки.');
                 return;
             }
