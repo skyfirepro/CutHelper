@@ -74,6 +74,14 @@
         transition: opacity 0.3s ease;
     }
 
+    body.preloading .container,
+    body.preloading .tabs-nav,
+    body.preloading .app-header,
+    body.preloading #themeToggle,
+    body.preloading #calculatorToggle {
+        visibility: hidden;
+    }
+
     .preloader-content {
         display: flex;
         flex-direction: column;
@@ -530,7 +538,7 @@
 </style>
 </head>
 
-<body>
+<body class="preloading">
     <div id="preloader">
         <div class="preloader-content">
             <div class="preloader-spinner"></div>
@@ -1754,14 +1762,21 @@
 
 <script>
     // Регистрация service worker для PWA и скрытие прелоадера
-    window.addEventListener('load', function () {
+    function hidePreloader() {
         const preloader = document.getElementById('preloader');
         if (preloader) {
             preloader.style.opacity = '0';
             setTimeout(() => {
                 preloader.style.display = 'none';
+                document.body.classList.remove('preloading');
             }, 300);
+        } else {
+            document.body.classList.remove('preloading');
         }
+    }
+
+    window.addEventListener('load', function () {
+        hidePreloader();
 
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js').then(function (registration) {
@@ -1769,6 +1784,12 @@
             }, function (err) {
                 console.log('ServiceWorker ошибка:', err);
             });
+        }
+    });
+
+    window.addEventListener('pageshow', function (event) {
+        if (event.persisted) {
+            hidePreloader();
         }
     });
 </script>
