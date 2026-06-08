@@ -160,7 +160,6 @@
         padding: 10px;
         border-radius: 50%;
         cursor: pointer;
-        box-shadow: 4px 4px 8px rgba(163, 163, 163, 0.5), -4px -4px 8px rgba(255, 255, 255, 0.7);
         font-size: 18px;
         z-index: 10;
         line-height: 1;
@@ -306,15 +305,21 @@
         align-items: center;
         gap: 10px;
         margin-top: 8px;
+        min-width: 0;
     }
 
     .input-with-checkbox .form-input {
         width: auto;
-        flex: 1;
+        flex: 1 1 auto;
+        min-width: 0;
         margin-top: 0;
     }
 
     .input-with-checkbox .checkbox-container {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        flex: 0 0 auto;
         margin-top: 0;
         white-space: nowrap;
     }
@@ -1028,7 +1033,7 @@
                 <option value="2.71">8011, 8011А, 8111, АЖ 0,8, АЖ 1, 1200, 8079 (ρ = 2,71 г/см³)</option>
                 <option value="2.74">8006, 3003 (ρ = 2,74 г/см³)</option>
             </select>
-            <label class="form-label">Коэффициент плотности намотки (%)</label>
+            <label class="form-label">Коэффициент плотности (%)</label>
             <div class="input-with-checkbox">
                 <input type="number" id="windingDensity" class="form-input" step="0.1">
                 <div class="checkbox-container">
@@ -1243,7 +1248,21 @@
             }
         }
 
+        function showShortPreloader() {
+            const preloader = document.getElementById('preloader');
+            if (!preloader) return;
+            preloader.style.display = 'flex';
+            preloader.style.opacity = '1';
+            setTimeout(() => {
+                preloader.style.opacity = '0';
+                setTimeout(() => {
+                    preloader.style.display = 'none';
+                }, 200);
+            }, 120);
+        }
+
         function toggleTheme() {
+            showShortPreloader();
             const isDark = document.body.classList.toggle('dark-mode');
             document.getElementById('themeToggle').textContent = isDark ? '☀️' : '🌙';
         }
@@ -1420,7 +1439,7 @@
                 result += defectiveCount * defectiveWeight;
             }
 
-            document.getElementById('obrezValue').textContent = result.toFixed(2);
+            document.getElementById('obrezValue').textContent = `${result.toFixed(2)} кг`;
             document.getElementById('obrezResult').style.display = 'block';
         }
 
@@ -1453,7 +1472,7 @@
             }
 
             const resultLength = originalLength * (targetArea / originalArea);
-            document.getElementById('recalcValue').textContent = `Нужный метраж: ${resultLength.toFixed(2)}`;
+            document.getElementById('recalcValue').textContent = `${resultLength.toFixed(2)} м.`;
             document.getElementById('recalcResult').style.display = 'block';
         }
 
