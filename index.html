@@ -541,6 +541,24 @@
         border-bottom-color: #e0e0e0;
     }
 
+    body.dark-mode #preloader {
+        background-color: #1e1e1e;
+    }
+
+    body.dark-mode .preloader-content {
+        background: rgba(30, 30, 30, 0.95);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    body.dark-mode .preloader-spinner {
+        border: 5px solid #3c3c3c;
+        border-top-color: #007BFF;
+    }
+
+    body.dark-mode .preloader-text {
+        color: #e0e0e0;
+    }
+
     /* Модальное окно */
     .modal {
         display: none;
@@ -1033,7 +1051,7 @@
                 <div class="defect-zone" id="defectZone1" data-zone="1">
                     <div class="underlined-title" style="display: flex; justify-content: space-between; align-items: center;">
                         <span>Зона №<span class="zone-number">1</span></span>
-                        <button type="button" class="zone-delete-btn hidden" style="padding: 6px 10px; background-color: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold;" onclick="removeDefectZone(1)">✕ Удалить</button>
+                        <button type="button" class="zone-delete-btn hidden" style="padding: 6px 10px; background-color: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold;" onclick="removeDefectZone(1)">Удалить</button>
                     </div>
                     <div class="defect-flex-row" style="margin-top: 10px;">
                         <div class="docs-flex-col">
@@ -1577,7 +1595,7 @@
                 <div class="defect-zone" id="defectZone${newZoneNum}" data-zone="${newZoneNum}" style="margin-top: 15px;">
                     <div class="underlined-title" style="display: flex; justify-content: space-between; align-items: center;">
                         <span>Зона №<span class="zone-number">${newZoneNum}</span></span>
-                        <button type="button" class="zone-delete-btn" style="padding: 6px 10px; background-color: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold;" onclick="removeDefectZone(${newZoneNum})">✕ Удалить</button>
+                        <button type="button" class="zone-delete-btn" style="padding: 6px 10px; background-color: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold;" onclick="removeDefectZone(${newZoneNum})">Удалить</button>
                     </div>
                     <div class="defect-flex-row" style="margin-top: 10px;">
                         <div class="docs-flex-col">
