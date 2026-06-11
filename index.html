@@ -323,6 +323,38 @@
         box-shadow: 4px 8px 18px rgba(255, 159, 10, 0.25);
     }
 
+    body.dark-mode .mini-knife-table {
+        border-color: #3a3f46;
+        background-color: #1e1e1e;
+        color: #e6eefc;
+    }
+
+    body.dark-mode .mini-knife-table th,
+    body.dark-mode .mini-knife-table td {
+        border-color: #3a3f46;
+    }
+
+    body.dark-mode .mini-knife-table th {
+        background-color: #2b2b31;
+        color: #e6eefc;
+    }
+
+    body.dark-mode .mini-knife-table tbody tr:nth-child(odd) {
+        background-color: #222228;
+    }
+
+    body.dark-mode .mini-knife-table tbody tr:nth-child(even) {
+        background-color: #1f1f23;
+    }
+
+    body.dark-mode .mini-knife-table td.scrap {
+        color: #ff7b8f;
+    }
+
+    body.dark-mode .table-note {
+        color: #b3b3b3;
+    }
+
     body.dark-mode .calculator-modal .modal-content {
         background: #212225;
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
@@ -358,16 +390,14 @@
     }
 
     .input-with-checkbox {
-        display: flex;
-        align-items: center;
-        gap: 10px;
+        position: relative;
         margin-top: 8px;
         min-width: 0;
     }
 
     .input-with-checkbox .form-input {
-        width: auto;
-        flex: 1 1 auto;
+        width: 100%;
+        padding-right: 44px;
         min-width: 0;
         margin-top: 0;
     }
@@ -382,30 +412,64 @@
     }
 
     .save-icon-btn {
-        background: none;
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: transparent;
         border: none;
-        font-size: 24px;
+        font-size: 18px;
         cursor: pointer;
-        padding: 0;
-        width: 28px;
-        height: 28px;
-        display: flex;
+        padding: 6px;
+        width: 34px;
+        height: 34px;
+        display: inline-flex;
         align-items: center;
         justify-content: center;
-        flex-shrink: 0;
-        opacity: 0.4;
-        transition: opacity 0.2s, transform 0.2s;
-        border-radius: 6px;
+        z-index: 2;
+        opacity: 0.6;
+        transition: opacity 0.12s, transform 0.12s, background-color 0.12s;
+        border-radius: 8px;
     }
 
     .save-icon-btn:hover {
-        opacity: 0.7;
-        background-color: rgba(0, 123, 255, 0.1);
+        opacity: 0.95;
+        background-color: rgba(0, 123, 255, 0.08);
     }
 
     .save-icon-btn.active {
         opacity: 1;
         color: #007BFF;
+        background-color: rgba(0,123,255,0.08);
+    }
+
+    /* Если связанное поле отключено — тускло показываем дискету и убираем выделение */
+    .input-with-checkbox input:disabled + .save-icon-btn,
+    .input-with-checkbox input[disabled] + .save-icon-btn {
+        opacity: 0.35;
+        color: rgba(128,128,128,0.9);
+        background-color: transparent;
+        box-shadow: none;
+        transform: none;
+        pointer-events: none;
+        cursor: default;
+    }
+
+    .input-with-checkbox input:disabled + .save-icon-btn.active,
+    .input-with-checkbox input[disabled] + .save-icon-btn.active {
+        opacity: 0.35;
+        color: rgba(128,128,128,0.9);
+        background-color: transparent;
+        box-shadow: none;
+        transform: none;
+        pointer-events: none;
+        cursor: default;
+    }
+
+    /* Тёмная тема — тонкая корректировка цвета тусклой иконки */
+    body.dark-mode .input-with-checkbox input:disabled + .save-icon-btn,
+    body.dark-mode .input-with-checkbox input[disabled] + .save-icon-btn {
+        color: rgba(200,200,200,0.65);
     }
 
     .form-input,
@@ -500,6 +564,52 @@
         color: white;
     }
 
+    .mini-knife-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: center;
+        table-layout: fixed;
+        border: 1px solid #dee2e6;
+        background-color: #fff;
+        color: #111;
+        margin-top: 15px;
+    }
+
+    .mini-knife-table th,
+    .mini-knife-table td {
+        border: 1px solid #dee2e6;
+        padding: 14px 10px;
+        font-size: 13px;
+    }
+
+    .mini-knife-table th {
+        background-color: #f8f9fa;
+        font-weight: 700;
+    }
+
+    .mini-knife-table tbody tr:nth-child(odd) {
+        background-color: #fff;
+    }
+
+    .mini-knife-table tbody tr:nth-child(even) {
+        background-color: #f7f9fc;
+    }
+
+    .mini-knife-table td {
+        font-weight: 700;
+        font-size: 17px;
+    }
+
+    .mini-knife-table td.scrap {
+        color: #dc3545;
+    }
+
+    .table-note {
+        font-size: 11px;
+        color: #666;
+        margin-top: 5px;
+    }
+
     @media (max-width: 420px) {
         .defect-result-table th,
         .defect-result-table td {
@@ -536,6 +646,13 @@
         background-color: #1e1e1e;
         color: #e0e0e0;
         box-shadow: inset 4px 4px 8px #000, inset -4px -4px 8px #3c3c3c;
+    }
+
+    /* Подсветка активной вкладки в тёмной теме */
+    body.dark-mode .tab-btn.active {
+        box-shadow: inset 3px 3px 6px #000, inset -3px -3px 6px #3c3c3c;
+        color: #007BFF;
+        background-color: #232428;
     }
 
     body.dark-mode .underlined-title span {
@@ -661,8 +778,8 @@
             <!-- <button class="tab-btn" onclick="openTab(event,'shaftTab')">Empty</button> -->
             <button class="tab-btn" onclick="openTab(event,'defectTransferTab')">Перенос <br> дефектов</button>
             <button class="tab-btn" onclick="openTab(event,'obrezTab')">Подсчет <br> обрези</button>
-            <!-- <button class="tab-btn" onclick="openTab(event,'shaftMiniTab')">Раскрой лапши</button> -->
-            <!-- <button class="tab-btn" onclick="openTab(event,'setupTab')">Настройка вала <br> <span style='color: rgb(145, 14, 14);'>( В разработке)</span></button> -->
+            <button class="tab-btn" onclick="openTab(event,'shaftMiniTab')">Раскрой лапши</button>
+            <button class="tab-btn" onclick="openTab(event,'setupTab')">Настройка вала <br> <span style='color: rgb(145, 14, 14);'>( В разработке)</span></button>
             <button class="tab-btn" onclick="openTab(event,'recalcTab')">Перерасчет<br>метража</button>
             <button class="tab-btn" onclick="openTab(event,'thicknessMeasurementTab')">Измерение <br> толщины</button>
             <button class="tab-btn" onclick="openTab(event,'rollWeightTab')">Вес <br> рулона</button>
@@ -796,6 +913,12 @@
         <div id="shaftMiniTab" class="tab-content">
             <h2 style="text-align: center; color: #007BFF; font-size: 18px;">Расчет раскроя лапши</h2>
         
+            <label class="form-label">Ширина контрножевого вала (мм):</label>
+            <select id="shaftWidthMini" class="form-select">
+                <option value="1610">1610 (C4-4)</option>
+                <option value="1670">1670 (D1/2)</option>
+            </select>
+        
             <div class="docs-flex-row">
                 <div class="docs-flex-col">
                     <label class="form-label">Ширина маточного рулона (мм)</label>
@@ -809,83 +932,143 @@
             </div>
         
             <div style="text-align: center; margin: 20px 0;">
-                <button id="calcBtn" class="calculate-btn" style="margin-top: 5px;">Рассчитать </button>
+                <button id="calcBtn" type="button" class="calculate-btn" style="margin-top: 5px;">Рассчитать </button>
             </div>
         
-            <table
-                style="width: 100%; border-collapse: collapse; text-align: center; table-layout: fixed; border: 1px solid #dee2e6;">
+            <table class="mini-knife-table">
                 <thead>
-                    <tr style="background-color: #f8f9fa;">
-                        <th style="border: 1px solid #dee2e6; padding: 10px; font-size: 13px;">Количество намоточных рулонов
-                        </th>
-                        <th style="border: 1px solid #dee2e6; padding: 10px; font-size: 13px;">Общая ширина ГП (мм)</th>
-                        <th style="border: 1px solid #dee2e6; padding: 10px; font-size: 13px;">Обрезь (мм)</th>
+                    <tr>
+                        <th rowspan="2">Количество намоточных рулонов</th>
+                        <th rowspan="2">Общая ширина ГП (мм)</th>
+                        <th colspan="2">Обрезь</th>
+                        <th rowspan="2">Положение первого ножа (мм)</th>
+                    </tr>
+                    <tr>
+                        <th>Кромка / Спутник (слева)</th>
+                        <th>Кромка / Спутник (справа)</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr style="background-color: #fff;">
-                        <td id="resCount1"
-                            style="border: 1px solid #dee2e6; padding: 15px; font-weight: bold; font-size: 18px;">
-                            0</td>
-                        <td id="resTotal1"
-                            style="border: 1px solid #dee2e6; padding: 15px; font-weight: bold; font-size: 18px;">0</td>
-                        <td id="resScrap1"
-                            style="border: 1px solid #dee2e6; padding: 15px; font-weight: bold; font-size: 18px; color: #dc3545">0</td>
-                    </tr>
-                    <tr style="background-color: #fff;">
-                        <td id="resCount2"
-                            style="border: 1px solid #dee2e6; padding: 15px; font-weight: bold; font-size: 18px;">
-                            0</td>
-                        <td id="resTotal2"
-                            style="border: 1px solid #dee2e6; padding: 15px; font-weight: bold; font-size: 18px;">0</td>
-                        <td id="resScrap2"
-                            style="border: 1px solid #dee2e6; padding: 15px; font-weight: bold; font-size: 18px; color: #dc3545">
-                            0</td>
+                    <tr>
+                        <td id="resCount1">0</td>
+                        <td id="resTotal1">0</td>
+                        <td id="resEdgeLeft">0</td>
+                        <td id="resEdgeRight">0</td>
+                        <td id="resFirstKnifePosition">0</td>
                     </tr>
                 </tbody>
             </table>
-            <p style="font-size: 11px; color: #666; margin-top: 5px;">*Вторая строка: расчет при уменьшении количества рулонов
-                на 1 шт.</p>
+            
+            <div style="margin-top: 20px;">
+                <label class="form-label" style="margin-bottom: 8px;">Количество намоточных рулонов:</label>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <input type="range" id="quantitySlider" class="form-input" min="0" max="10" value="0" style="flex: 1; height: 6px;">
+                    <span id="quantityValue" style="font-weight: bold; min-width: 40px; text-align: right;">0</span>
+                </div>
+            </div>
+            
+            <div style="margin-top: 15px;">
+                <label class="form-label" style="margin-bottom: 8px;">Ширина кромки / спутника (мм):</label>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <input type="range" id="edgeSlider" class="form-input" min="0" max="50" value="0" step="5" style="flex: 1; height: 6px;">
+                    <span id="edgeValue" style="font-weight: bold; min-width: 40px; text-align: right;">0</span>
+                </div>
+            </div>
         </div>
 
         <script>
+            // Обновляем range слайдеры
+            function updateQuantityValue(value) {
+                document.getElementById('quantityValue').textContent = value;
+            }
+
+            document.getElementById('quantitySlider').addEventListener('input', function() {
+                updateQuantityValue(this.value);
+                calculateMiniShaft('quantity');
+            });
+            
+            document.getElementById('edgeSlider').addEventListener('input', function() {
+                document.getElementById('edgeValue').textContent = parseFloat(this.value).toFixed(1);
+                calculateMiniShaft('edge');
+            });
+
+            document.getElementById('masterWidthMini').addEventListener('change', function() {
+                calculateMiniShaft('master');
+            });
+
+            document.getElementById('shaftWidthMini').addEventListener('change', function() {
+                calculateMiniShaft('shaft');
+            });
+            
             document.getElementById('calcBtn').addEventListener('click', function () {
+                calculateMiniShaft('button');
+            });
+            
+            function calculateMiniShaft(source = 'button') {
                 const master = parseFloat(document.getElementById('masterWidthMini').value);
                 const slit = parseFloat(document.getElementById('slitWidth').value);
+                const slider = document.getElementById('quantitySlider');
+                const edgeWidth = parseFloat(document.getElementById('edgeSlider').value) || 0;
 
                 if (!master || !slit || master <= 0 || slit <= 0) {
-                    alert("Введите корректные данные");
+                    if (source === 'button') {
+                        alert("Введите корректные данные");
+                    }
                     return;
                 }
 
-                // --- ЛОГИКА ПЕРВОЙ СТРОКИ (N) ---
-                const count1 = Math.floor(master / slit);
-                const total1 = count1 * slit;
-                const scrap1 = master - total1;
+                const edgeLeft = edgeWidth;
+                const maxCount = Math.max(0, Math.floor((master - edgeLeft) / slit));
+                if (source !== 'edge') {
+                    slider.max = maxCount;
+                }
 
-                // Заполнение 1-й строки
-                document.getElementById('resCount1').textContent = count1;
-                document.getElementById('resTotal1').textContent = total1;
-                document.getElementById('resScrap1').textContent = scrap1.toFixed(1);
+                let count = parseInt(slider.value, 10);
+                if (isNaN(count) || count < 0) {
+                    count = 0;
+                }
 
-                // --- ЛОГИКА ВТОРОЙ СТРОКИ (N - 1) ---
-                // Берем результат деления, отбрасываем дробь и вычитаем 1
-                const count2 = count1 > 0 ? count1 - 1 : 0;
-                const total2 = count2 * slit;
-                const scrap2 = master - total2;
+                if (source === 'button') {
+                    count = maxCount;
+                    slider.value = count;
+                    updateQuantityValue(count);
+                } else if (source === 'quantity' && count > maxCount) {
+                    count = maxCount;
+                    slider.value = count;
+                    updateQuantityValue(count);
+                }
 
-                // Заполнение 2-й строки
-                document.getElementById('resCount2').textContent = count2;
-                document.getElementById('resTotal2').textContent = total2;
-                document.getElementById('resScrap2').textContent = scrap2.toFixed(1);
-            });
+                const total = count * slit;
+                const scrap = master - total;
+                const edgeSlider = document.getElementById('edgeSlider');
+                const shaftWidth = parseFloat(document.getElementById('shaftWidthMini').value) || 0;
+                const firstKnifePosition = shaftWidth - master + edgeLeft;
+
+                document.getElementById('resFirstKnifePosition').textContent = firstKnifePosition.toFixed(1);
+
+                edgeSlider.max = Math.max(0, scrap);
+                if (scrap <= 0) {
+                    edgeSlider.value = 0;
+                    document.getElementById('edgeValue').textContent = '0.0';
+                } else if (parseFloat(edgeSlider.value) > scrap) {
+                    edgeSlider.value = scrap;
+                    document.getElementById('edgeValue').textContent = scrap.toFixed(1);
+                }
+
+                const edgeRight = scrap - edgeLeft;
+
+                document.getElementById('resCount1').textContent = count;
+                document.getElementById('resTotal1').textContent = total;
+                document.getElementById('resEdgeLeft').textContent = edgeLeft.toFixed(1);
+                document.getElementById('resEdgeRight').textContent = (edgeRight >= 0 ? edgeRight : 0).toFixed(1);
+            }
         </script>
         
 
 
         <div id="setupTab" class="tab-content">
             <h2 style="text-align: center; color: #007BFF; font-size: 18px;">Настройка контр. ножевого вала</h2>
-            <div class="underlined-title"><span>Ширина ножевого вала (мм)</span></div>
+            <div class="underlined-title"><span>Ширина контрножевого вала (мм)</span></div>
             <select id="shaftWidthSelect" class="form-select" style="margin-bottom: 20px;">
                 <option value="1700">1700 (C4-1/3)</option>
                 <option value="1610">1610 (C4-4)</option>
@@ -948,11 +1131,6 @@
                     <text x="300" y="70" text-anchor="middle" font-size="16" fill="#333">Контрножевой вал</text>
                 </svg>
             </div>
-            <!-- Контрнож (один, узкий) -->
-            <rect x="100" y="25" width="6" height="30" rx="1" fill="#007BFF" stroke="#0056b3" stroke-width="1" />
-            <!-- Метка -->
-            <text x="300" y="70" text-anchor="middle" font-size="16" fill="#333">Контрножевой вал</text>
-            </svg>
         </div>
 
         <div id="obrezTab" class="tab-content">
@@ -1042,7 +1220,10 @@
             <label class="form-label">Толщина фольги (мкм):</label>
             <input type="number" id="foilThickness" class="form-input" step="any">
             <label class="form-label">Диаметр шпули(мм):</label>
-            <input type="number" id="spoolOuterDiameter" class="form-input" step="any" value="158.4">
+            <select id="spoolOuterDiameter" class="form-select">
+                <option value="158.4">158.4</option>
+                <option value="300">300</option>
+            </select>
             <label class="form-label">Диаметр полного рулона (мм):</label>
             <input type="number" id="rollOuterDiameter" class="form-input" step="any">
             <label class="form-label">Длина фольги в рулоне (м) (опционально, <strong style="color: rgb(173, 43, 43)">для максимально точного расчета!</strong>):</label>
