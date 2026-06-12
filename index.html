@@ -351,6 +351,16 @@
         color: #ff7b8f;
     }
 
+    .highlight-zero {
+        background-color: #ffe5e7;
+        color: #7b1f24;
+    }
+
+    body.dark-mode .highlight-zero {
+        background-color: #4a1f24;
+        color: #ffb5be;
+    }
+
     body.dark-mode .table-note {
         color: #b3b3b3;
     }
@@ -578,8 +588,8 @@
     .mini-knife-table th,
     .mini-knife-table td {
         border: 1px solid #dee2e6;
-        padding: 14px 10px;
-        font-size: 13px;
+        padding: 14px 5px;
+        font-size: 12px;
     }
 
     .mini-knife-table th {
@@ -922,12 +932,12 @@
             <div class="docs-flex-row">
                 <div class="docs-flex-col">
                     <label class="form-label">Ширина маточного рулона (мм)</label>
-                    <input type="number" id="masterWidthMini" class="form-input" placeholder="Введите ширину">
+                    <input type="number" id="masterWidthMini" class="form-input">
                 </div>
         
                 <div class="docs-flex-col">
                     <label class="form-label">Ширина намоточного рулона (мм)</label>
-                    <input type="number" id="slitWidth" class="form-input" placeholder="Введите ширину">
+                    <input type="number" id="slitWidth" class="form-input">
                 </div>
             </div>
         
@@ -1057,10 +1067,27 @@
 
                 const edgeRight = scrap - edgeLeft;
 
+                const edgeLeftCell = document.getElementById('resEdgeLeft');
+                const edgeRightCell = document.getElementById('resEdgeRight');
+                const leftValue = edgeLeft.toFixed(1);
+                const rightValue = (edgeRight >= 0 ? edgeRight : 0).toFixed(1);
+
                 document.getElementById('resCount1').textContent = count;
                 document.getElementById('resTotal1').textContent = total.toFixed(1);
-                document.getElementById('resEdgeLeft').textContent = edgeLeft.toFixed(1);
-                document.getElementById('resEdgeRight').textContent = (edgeRight >= 0 ? edgeRight : 0).toFixed(1);
+                edgeLeftCell.textContent = leftValue;
+                edgeRightCell.textContent = rightValue;
+
+                if (leftValue === '0.0') {
+                    edgeLeftCell.classList.add('highlight-zero');
+                } else {
+                    edgeLeftCell.classList.remove('highlight-zero');
+                }
+
+                if (rightValue === '0.0') {
+                    edgeRightCell.classList.add('highlight-zero');
+                } else {
+                    edgeRightCell.classList.remove('highlight-zero');
+                }
             }
         </script>
         
