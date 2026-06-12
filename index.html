@@ -779,7 +779,7 @@
             <button class="tab-btn" onclick="openTab(event,'defectTransferTab')">Перенос <br> дефектов</button>
             <button class="tab-btn" onclick="openTab(event,'obrezTab')">Подсчет <br> обрези</button>
             <button class="tab-btn" onclick="openTab(event,'shaftMiniTab')">Раскрой лапши</button>
-            <button class="tab-btn" onclick="openTab(event,'setupTab')">Настройка вала <br> <span style='color: rgb(145, 14, 14);'>( В разработке)</span></button>
+            <!-- <button class="tab-btn" onclick="openTab(event,'setupTab')">Настройка вала <br> <span style='color: rgb(145, 14, 14);'>( В разработке)</span></button> -->
             <button class="tab-btn" onclick="openTab(event,'recalcTab')">Перерасчет<br>метража</button>
             <button class="tab-btn" onclick="openTab(event,'thicknessMeasurementTab')">Измерение <br> толщины</button>
             <button class="tab-btn" onclick="openTab(event,'rollWeightTab')">Вес <br> рулона</button>
@@ -911,7 +911,7 @@
         
 
         <div id="shaftMiniTab" class="tab-content">
-            <h2 style="text-align: center; color: #007BFF; font-size: 18px;">Расчет раскроя лапши</h2>
+            <h2 style="text-align: center; color: #007BFF; font-size: 18px;">Раскрой лапши</h2>
         
             <label class="form-label">Ширина контрножевого вала (мм):</label>
             <select id="shaftWidthMini" class="form-select">
@@ -938,10 +938,10 @@
             <table class="mini-knife-table">
                 <thead>
                     <tr>
-                        <th rowspan="2">Количество намоточных рулонов</th>
+                        <th rowspan="2">Кол-во нам. рулонов (шт)</th>
                         <th rowspan="2">Общая ширина ГП (мм)</th>
                         <th colspan="2">Обрезь</th>
-                        <th rowspan="2">Положение первого ножа (мм)</th>
+                        <th rowspan="2">Первый нож (мм)</th>
                     </tr>
                     <tr>
                         <th>Кромка / Спутник (слева)</th>
@@ -1042,7 +1042,7 @@
                 const scrap = master - total;
                 const edgeSlider = document.getElementById('edgeSlider');
                 const shaftWidth = parseFloat(document.getElementById('shaftWidthMini').value) || 0;
-                const firstKnifePosition = shaftWidth - master + edgeLeft;
+                const firstKnifePosition = (shaftWidth - master) / 2 + edgeLeft;
 
                 document.getElementById('resFirstKnifePosition').textContent = firstKnifePosition.toFixed(1);
 
@@ -1058,7 +1058,7 @@
                 const edgeRight = scrap - edgeLeft;
 
                 document.getElementById('resCount1').textContent = count;
-                document.getElementById('resTotal1').textContent = total;
+                document.getElementById('resTotal1').textContent = total.toFixed(1);
                 document.getElementById('resEdgeLeft').textContent = edgeLeft.toFixed(1);
                 document.getElementById('resEdgeRight').textContent = (edgeRight >= 0 ? edgeRight : 0).toFixed(1);
             }
